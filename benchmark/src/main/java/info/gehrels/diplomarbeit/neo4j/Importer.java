@@ -4,7 +4,10 @@ import com.google.common.base.Stopwatch;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
+import org.neo4j.unsafe.batchinsert.BatchInserterIndex;
+import org.neo4j.unsafe.batchinsert.BatchInserterIndexProvider;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
+import org.neo4j.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,15 +25,17 @@ public class Importer {
         }
     };
 
-    private final Map<String, Long> nodeCache = new HashMap<String, Long>(200000);
-    private final BatchInserter graphDatabaseService;
+    private final Map<String, Long> nodeCache = new HashMap<>(200000);
+    private final BatchInserter batchInserter;
     private FileInputStream inputStream;
+    private final BatchInserterIndex nodeIndex;
+    private final BatchInserterIndexProvider indexProvider;
 
 
     public static void main(String... args) {
-        
+
         try {
-        Stopwatch stopwatch = new Stopwatch().start();
+            Stopwatch stopwatch = new Stopwatch().start();
             new Importer(args[0], args[1]).importNow().shutdown();
             stopwatch.stop();
             System.out.println(stopwatch);
@@ -42,7 +47,10 @@ public class Importer {
 
     public Importer(String sourceFile, String graphDbFolder) throws FileNotFoundException {
         this.inputStream = new FileInputStream(sourceFile);
-        graphDatabaseService = BatchInserters.inserter(graphDbFolder);
+        batchInserter = BatchInserters.inserter(graphDbFolder);
+
+        indexProvider = new LuceneBatchInserterIndexProvider(batchInserter);
+        nodeIndex = indexProvider.nodeIndex("nodes", MapUtil.<String, String>genericMap("type", "exact"));
     }
 
     public Importer importNow() {
@@ -56,7 +64,7 @@ public class Importer {
     }
 
     private void createEdge(long from, long to, String label) {
-        graphDatabaseService.createRelationship(from, to, TYPE, MapUtil.<String, Object>genericMap("label", label));
+        batchInserter.createRelationship(from, to, TYPE, MapUtil.<String, Object>genericMap("label", label));
     }
 
 
@@ -68,13 +76,15 @@ public class Importer {
 
         Map<String, Object> properties = genericMap(NAME, nodeName);
 
-        long newNode = graphDatabaseService.createNode(properties);
+        long newNode = batchInserter.createNode(properties);
 
+        nodeIndex.add(newNode, MapUtil.<String, Object>genericMap("name", nodeName));
         nodeCache.put(nodeName, newNode);
         return newNode;
     }
 
     public void shutdown() {
-        graphDatabaseService.shutdown();
+        indexProvider.shutdown();
+        batchInserter.shutdown();
     }
 }

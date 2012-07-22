@@ -1,7 +1,11 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.traversal.Evaluators;
+import org.neo4j.graphdb.traversal.Traverser;
+import org.neo4j.kernel.Traversal;
 
 public class Benchmarks {
     private final GraphDatabaseService graphDb;
@@ -20,7 +24,12 @@ public class Benchmarks {
     }
 
     private void friendsOfFriends() {
-        
+        Node single = graphDb.index().forNodes("nodes").get("name", "12345").getSingle();
+        Traverser traverser = Traversal.traversal().evaluator(Evaluators.includingDepths(1,2)).traverse(single);
+
+        for (Node node : traverser.nodes()) {
+            System.out.println(node.getProperty("name"));
+        }
     }
 
     private static void registerShutdownHook(final GraphDatabaseService graphDb) {
