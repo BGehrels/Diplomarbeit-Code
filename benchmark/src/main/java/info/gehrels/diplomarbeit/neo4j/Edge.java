@@ -1,6 +1,6 @@
 package info.gehrels.diplomarbeit.neo4j;
 
-public class Edge {
+public class Edge implements GraphElement {
     public final String from;
     public final String to;
     public final String label;
