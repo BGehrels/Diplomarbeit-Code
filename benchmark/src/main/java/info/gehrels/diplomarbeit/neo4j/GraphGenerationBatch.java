@@ -56,29 +56,17 @@ public class GraphGenerationBatch {
 	private static void generateAGeoffFile(int numberOfNodes, int numberOfEdges, String fileName) throws IOException {
 		FileWriter writer = new FileWriter(fileName);
 
-		MyEdgeFactory edgeFactory = new MyEdgeFactory(writer);
-		Generator generator = new RMATGenerator(edgeFactory, new MyNodeFactory(writer), numberOfNodes, numberOfEdges);
+		EdgeWriterFactory edgeWriterFactory = new EdgeWriterFactory(writer);
+		Generator generator = new RMATGenerator(edgeWriterFactory, new NodeWriter(writer), numberOfNodes, numberOfEdges);
 		generator.generate();
 		writer.close();
 	}
 
-	public static byte getLabel() {
-		int rndValue = RANDOM.nextInt(1000000000);
-		double sum = 0;
-		for (byte i = 1; i <= 4; i++) {
-			sum += 702439024 * pow(i, -2);
-			if (rndValue < sum) {
-				return i;
-			}
-		}
-		throw new IllegalStateException();
-	}
-
-	static class MyNodeFactory {
+	static class NodeWriter {
 
 		private final FileWriter writer;
 
-		public MyNodeFactory(FileWriter writer) {
+		public NodeWriter(FileWriter writer) {
 			this.writer = writer;
 		}
 
@@ -92,12 +80,24 @@ public class GraphGenerationBatch {
 		}
 	}
 
-	static class MyEdgeFactory {
+	static class EdgeWriterFactory {
 
 		private final FileWriter writer;
 
-		public MyEdgeFactory(FileWriter writer) {
+		public EdgeWriterFactory(FileWriter writer) {
 			this.writer = writer;
+		}
+
+		public static byte getLabel() {
+			int rndValue = RANDOM.nextInt(1000000000);
+			double sum = 0;
+			for (byte i = 1; i <= 4; i++) {
+				sum += 702439024 * pow(i, -2);
+				if (rndValue < sum) {
+					return i;
+				}
+			}
+			throw new IllegalStateException();
 		}
 
 		public Boolean createEdge(String sourceVertex, String targetVertex) {

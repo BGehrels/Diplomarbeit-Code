@@ -1,7 +1,7 @@
 package info.gehrels.diplomarbeit.neo4j;
 
-import info.gehrels.diplomarbeit.neo4j.GraphGenerationBatch.MyEdgeFactory;
-import info.gehrels.diplomarbeit.neo4j.GraphGenerationBatch.MyNodeFactory;
+import info.gehrels.diplomarbeit.neo4j.GraphGenerationBatch.EdgeWriterFactory;
+import info.gehrels.diplomarbeit.neo4j.GraphGenerationBatch.NodeWriter;
 
 import java.util.Random;
 
@@ -17,20 +17,20 @@ public class RMATGenerator implements Generator {
 	private static final byte TOP_RIGHT_PERCENTAGE = 19;
 	private static final byte BOTTOM_LEFT_PERCENTAGE = 19;
 
-	private final MyEdgeFactory edgeFactory;
+	private final EdgeWriterFactory edgeWriterFactory;
 	private final int numberOfNodes;
 	private final int expectedNumberOfEdges;
 	final boolean[][] adjacencyMatrix;
 	int actualNumberOfEdges;
 
-	public RMATGenerator(MyEdgeFactory edgeFactory, MyNodeFactory nodeFactory, int numberOfNodes,
+	public RMATGenerator(EdgeWriterFactory edgeWriterFactory, NodeWriter nodeWriter, int numberOfNodes,
 	                     int expectedNumberOfEdges) {
-		this.edgeFactory = edgeFactory;
+		this.edgeWriterFactory = edgeWriterFactory;
 		this.numberOfNodes = numberOfNodes;
 		this.expectedNumberOfEdges = expectedNumberOfEdges;
 		this.adjacencyMatrix = new boolean[numberOfNodes][numberOfNodes];
 		for (int i = 0; i < numberOfNodes; i++) {
-			nodeFactory.createNode("" + i);
+			nodeWriter.createNode("" + i);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class RMATGenerator implements Generator {
 			if (!adjacencyMatrix[topLeftX][topLeftY]) {
 				actualNumberOfEdges++;
 				adjacencyMatrix[topLeftX][topLeftY] = true;
-				edgeFactory.createEdge("" + topLeftX, "" + topLeftY);
+				edgeWriterFactory.createEdge("" + topLeftX, "" + topLeftY);
 			}
 		} else {
 			int quadrant = throwTheQuadrantDice();
