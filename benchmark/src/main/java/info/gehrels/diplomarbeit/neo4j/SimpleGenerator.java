@@ -7,9 +7,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
-public class SimpleGenerator {
+public class SimpleGenerator implements Generator {
+	static Random RANDOM = new Random();
 	private final MyEdgeFactory edgeFactory;
     private final MyNodeFactory nodeFactory;
     private int numberOfNodesLeft;
@@ -25,6 +27,7 @@ public class SimpleGenerator {
         this.numberOfEdgesLeft = numberOfEdges;
     }
 
+	@Override
 	public void generate() {
         createNode("" + 0);
 
@@ -51,7 +54,7 @@ public class SimpleGenerator {
     }
 
     private void addEdge(String from) {
-        int rndValue = GraphGenerationBatch.RANDOM.nextInt(sumOverAllDegrees);
+        int rndValue = RANDOM.nextInt(sumOverAllDegrees);
 
 
         int localSum = 0;
@@ -65,7 +68,7 @@ public class SimpleGenerator {
     }
 
     private void addEdge(String from, String to) {
-        if (GraphGenerationBatch.RANDOM.nextInt(2) == 0) {
+        if (RANDOM.nextInt(2) == 0) {
 
             edgeFactory.createEdge(from, to);
         } else {
