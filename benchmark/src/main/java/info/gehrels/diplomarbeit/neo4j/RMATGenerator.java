@@ -14,9 +14,8 @@ public class RMATGenerator implements Generator {
 	public static final int BOTTOM_RIGHT = 3;
 
 	private static final byte TOP_LEFT_PERCENTAGE = 58;
-	private static final byte DIVISOR = 3;
-	private static final byte TOP_RIGHT_PERCENTAGE = TOP_LEFT_PERCENTAGE / DIVISOR;
-	private static final byte BOTTOM_LEFT_PERCENTAGE = TOP_LEFT_PERCENTAGE / DIVISOR;
+	private static final byte TOP_RIGHT_PERCENTAGE = 19;
+	private static final byte BOTTOM_LEFT_PERCENTAGE = 19;
 
 	private final MyEdgeFactory edgeFactory;
 	private final int numberOfNodes;
