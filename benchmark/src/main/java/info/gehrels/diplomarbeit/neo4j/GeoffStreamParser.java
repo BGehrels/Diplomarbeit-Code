@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GeoffStreamParser  implements Iterable<GraphElement>{
-    private static final Pattern NODE_PATTERN = Pattern.compile("\\(([^)]*)\\) \\{\"name\": \"([^\"]+)\", type: ([0-9]+)\\}");
+    private static final Pattern NODE_PATTERN = Pattern.compile("\\(([^)]*)\\) \\{}");
     private static final Pattern EDGE_PATTERN = Pattern.compile("\\(([^)]*)\\)-\\[:([^]]+)\\]->\\(([^)]*)\\)");
     protected BufferedReader bufferedReader;
 
@@ -39,9 +39,7 @@ public class GeoffStreamParser  implements Iterable<GraphElement>{
                         Matcher nodeMatcher = NODE_PATTERN.matcher(line);
                         if (nodeMatcher.matches()) {
                             String id = nodeMatcher.group(1);
-                            String name = nodeMatcher.group(2);
-                            String type = nodeMatcher.group(3);
-                            next.add(new Node(id, name, type));
+                            next.add(new Node(Long.valueOf(id)));
                         } else {
                             Matcher edgeMatcher = EDGE_PATTERN.matcher(line);
                             if (!edgeMatcher.matches()) {

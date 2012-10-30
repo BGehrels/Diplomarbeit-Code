@@ -1,7 +1,6 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
-import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserterIndex;
@@ -20,14 +19,8 @@ import static org.neo4j.helpers.collection.MapUtil.genericMap;
 public class Neo4jImporter {
     private static final String NAME_KEY = "name";
     private static final String TYPE_KEY = "type";
-    static final RelationshipType TYPE = new RelationshipType() {
-        @Override
-        public String name() {
-            return "DEFAULT";
-        }
-    };
 
-    private final Map<String, Long> nodeCache = new HashMap<>(200000);
+    private final Map<Long, Long> nodeCache = new HashMap<>(200000);
     private final BatchInserter batchInserter;
     private FileInputStream inputStream;
     private final BatchInserterIndex nodeIndex;
@@ -77,11 +70,11 @@ public class Neo4jImporter {
 
 
     private long createNode(Node node) {
-        Map<String, Object> properties = genericMap(NAME_KEY, node.name, TYPE_KEY,node.type);
+        Map<String, Object> properties = genericMap(NAME_KEY, node.id, TYPE_KEY);
 
         long newNode = batchInserter.createNode(properties);
 
-        nodeIndex.add(newNode, MapUtil.<String, Object>genericMap(NAME_KEY, node.name, TYPE_KEY, node.type));
+        nodeIndex.add(newNode, MapUtil.<String, Object>genericMap(NAME_KEY, node.id));
         nodeCache.put(node.id, newNode);
         return newNode;
     }

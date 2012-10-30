@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class AlibabaStreamParser implements Iterable<GraphElement> {
-    private Set<String> nodesAlreadyParsed = new HashSet<>();
+    private Set<Long> nodesAlreadyParsed = new HashSet<>();
     protected BufferedReader bufferedReader;
 
     public AlibabaStreamParser(FileInputStream reader) {
@@ -36,18 +36,18 @@ public class AlibabaStreamParser implements Iterable<GraphElement> {
 
                     if (line != null && !line.isEmpty()) {
                         String[] splitted = line.split(" ");
-                        addToNextQueue(splitted[0]);
-                        addToNextQueue(splitted[1]);
+                        addToNextQueue(Long.valueOf(splitted[0]));
+                        addToNextQueue(Long.valueOf(splitted[1]));
                         next.add(new Edge(Long.valueOf(splitted[0]), Long.valueOf(splitted[1]), splitted[2]));
                     }
                 }
 
             }
 
-            private void addToNextQueue(String nodeName) {
-                if (!nodesAlreadyParsed.contains(nodeName)) {
-                    next.add(new Node(nodeName));
-                    nodesAlreadyParsed.add(nodeName);
+            private void addToNextQueue(long nodeId) {
+                if (!nodesAlreadyParsed.contains(nodeId)) {
+                    next.add(new Node(nodeId));
+                    nodesAlreadyParsed.add(nodeId);
                 }
             }
 
