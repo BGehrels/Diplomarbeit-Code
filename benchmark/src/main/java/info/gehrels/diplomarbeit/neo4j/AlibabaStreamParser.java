@@ -38,7 +38,7 @@ public class AlibabaStreamParser implements Iterable<GraphElement> {
                         String[] splitted = line.split(" ");
                         addToNextQueue(splitted[0]);
                         addToNextQueue(splitted[1]);
-                        next.add(new Edge(splitted[0], splitted[1], splitted[2]));
+                        next.add(new Edge(Long.valueOf(splitted[0]), Long.valueOf(splitted[1]), splitted[2]));
                     }
                 }
 

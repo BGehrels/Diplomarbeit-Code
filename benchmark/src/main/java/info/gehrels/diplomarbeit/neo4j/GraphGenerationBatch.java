@@ -1,7 +1,5 @@
 package info.gehrels.diplomarbeit.neo4j;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,17 +34,7 @@ public class GraphGenerationBatch {
 		String fileNameBase = numberOfNodes + "_" + numberOfEdges;
 		String geoffFileName = fileNameBase + ".geoff";
 		deleteGeofFile(geoffFileName);
-		deleteImportedDirectory(fileNameBase + ".imported");
 		generateAGeoffFile(numberOfNodes, numberOfEdges, geoffFileName);
-	}
-
-	private static void deleteImportedDirectory(String importedDirName) {
-		try {
-			FileUtils.deleteDirectory(new File(importedDirName));
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-
 	}
 
 	private static void deleteGeofFile(String geoffFileName) {

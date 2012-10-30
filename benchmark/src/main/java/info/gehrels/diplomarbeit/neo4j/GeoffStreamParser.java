@@ -50,7 +50,7 @@ public class GeoffStreamParser  implements Iterable<GraphElement>{
                             String id1 = edgeMatcher.group(1);
                             String label = edgeMatcher.group(2);
                             String id2 = edgeMatcher.group(3);
-                            next.add(new Edge(id1, id2, label));
+                            next.add(new Edge(Long.valueOf(id1), Long.valueOf(id2), label));
                         }
                     }
                 }

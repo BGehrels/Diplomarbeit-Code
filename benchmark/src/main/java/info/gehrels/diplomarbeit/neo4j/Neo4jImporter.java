@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.neo4j.graphdb.DynamicRelationshipType.withName;
 import static org.neo4j.helpers.collection.MapUtil.genericMap;
 
-public class Importer {
+public class Neo4jImporter {
     private static final String NAME_KEY = "name";
     private static final String TYPE_KEY = "type";
     static final RelationshipType TYPE = new RelationshipType() {
@@ -38,7 +38,7 @@ public class Importer {
 
         try {
             Stopwatch stopwatch = new Stopwatch().start();
-            new Importer(args[0], args[1]).importNow().shutdown();
+            new Neo4jImporter(args[0], args[1]).importNow().shutdown();
             stopwatch.stop();
             System.out.println(stopwatch);
         } catch (FileNotFoundException e) {
@@ -47,7 +47,7 @@ public class Importer {
         }
     }
 
-    public Importer(String sourceFile, String graphDbFolder) throws FileNotFoundException {
+    public Neo4jImporter(String sourceFile, String graphDbFolder) throws FileNotFoundException {
         this.inputStream = new FileInputStream(sourceFile);
         batchInserter = BatchInserters.inserter(graphDbFolder);
 
@@ -55,7 +55,7 @@ public class Importer {
         nodeIndex = indexProvider.nodeIndex("nodes", MapUtil.<String, String>genericMap("type", "exact"));
     }
 
-    public Importer importNow() {
+    public Neo4jImporter importNow() {
         for (GraphElement elem : new GeoffStreamParser(inputStream)) {
             if (elem instanceof Edge) {
                 Edge edge = (Edge) elem;

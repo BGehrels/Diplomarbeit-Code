@@ -1,11 +1,5 @@
 package info.gehrels.diplomarbeit.neo4j;
 
-import com.google.common.base.Function;
-import com.twitter.flockdb.thrift.FlockException;
-import org.neo4j.graphalgo.CostAccumulator;
-import org.neo4j.graphalgo.CostEvaluator;
-import org.neo4j.graphalgo.impl.centrality.BetweennessCentrality;
-import org.neo4j.graphalgo.impl.shortestpath.SingleSourceShortestPathDijkstra;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -17,15 +11,9 @@ import org.neo4j.graphdb.traversal.Traverser;
 import org.neo4j.kernel.Traversal;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-import java.io.IOException;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import static com.google.common.collect.Iterables.addAll;
-import static com.google.common.collect.Iterables.transform;
 import static org.neo4j.helpers.collection.Iterables.count;
 
 public class Benchmarks {
@@ -41,15 +29,9 @@ public class Benchmarks {
 		registerShutdownHook(graphDb);
 	}
 
-	private void run() throws IOException, FlockException {
-		//FlockDB flockDB = new FlockDB("localhost", 7915);
-		//flockDB.batchExecution(Priority.High).add(1,1,1,true,2).add(1,1,1,false,2).execute();
-		//System.in.read();
-		//System.out.println(flockDB.getMetadata(1,1));
-		//flockDB.close();
-
+	private void run() {
 		nodeDegreeHistogram();
-		//labelHistogram();
+		labelHistogram();
 		/*Stopwatch stopwatch = new Stopwatch().start();
 				friendsOfFriends(false);
 				System.out.println(stopwatch.stop().elapsedMillis());
@@ -102,40 +84,6 @@ public class Benchmarks {
 		}
 	}
 
-	private void betweennessCentrality() {
-		Set<Node> nodes = new HashSet<>();
-		NodeNameProvider nodeNameProvider = new NodeNameProvider(123456789,
-		                                                         GlobalGraphOperations.at(graphDb).getAllNodes());
-		addAll(nodes, transform(nodeNameProvider, new Function<String, Node>() {
-			@Override
-			public Node apply(String nodeName) {
-				return graphDb.index().forNodes("nodes").get("name", nodeName).getSingle();
-			}
-		}));
-
-		BetweennessCentrality betweennessCentrality = new BetweennessCentrality(
-			new SingleSourceShortestPathDijkstra(new Long(0), null, new CostEvaluator<Long>() {
-				@Override
-				public Long getCost(Relationship relationship, Direction direction) {
-					return Long.valueOf((String) relationship.getProperty("label")) + 1;
-				}
-			}, new LongAdder(), new LongComparator(), Direction.OUTGOING, Importer.TYPE), nodes);
-		for (Node node : nodes) {
-			betweennessCentrality.getCentrality(node);
-		}
-	}
-
-	private void findMaxNodeName() {
-		long max = -1;
-		for (Node node : GlobalGraphOperations.at(graphDb).getAllNodes()) {
-			if (!node.hasProperty("name"))
-				continue;
-			max = Math.max(Long.valueOf((String) node.getProperty("name")), max);
-		}
-
-		System.out.println(max);
-	}
-
 	private void friendsOfFriends(boolean breadthFirst) {
 		for (String nodeName : new NodeNameProvider(987654321, GlobalGraphOperations.at(graphDb).getAllNodes())) {
 			friendsOfFriendsFor(nodeName, breadthFirst);
@@ -164,19 +112,5 @@ public class Benchmarks {
 				graphDb.shutdown();
 			}
 		});
-	}
-
-	private static class LongAdder implements CostAccumulator<Long> {
-		@Override
-		public Long addCosts(Long c1, Long c2) {
-			return c1 + c2;
-		}
-	}
-
-	private static class LongComparator implements Comparator<Long> {
-		@Override
-		public int compare(Long o1, Long o2) {
-			return o1.compareTo(o2);
-		}
 	}
 }
