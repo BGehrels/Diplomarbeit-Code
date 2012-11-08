@@ -25,7 +25,7 @@ public class FlockDBImporter {
 
 	public FlockDBImporter(String sourceFile) throws IOException {
 		this.inputStream = new FileInputStream(sourceFile);
-		flockDB = new FlockDB("localhost", 7915);
+		flockDB = new FlockDB("localhost", 7915, 1000000);
 	}
 
 	public FlockDBImporter importNow() throws IOException, FlockException {

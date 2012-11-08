@@ -17,8 +17,7 @@ import static org.neo4j.graphdb.DynamicRelationshipType.withName;
 import static org.neo4j.helpers.collection.MapUtil.genericMap;
 
 public class Neo4jImporter {
-    private static final String NAME_KEY = "name";
-    private static final String TYPE_KEY = "type";
+    static final String NAME_KEY = "name";
 
     private final Map<Long, Long> nodeCache = new HashMap<>(200000);
     private final BatchInserter batchInserter;
@@ -70,7 +69,7 @@ public class Neo4jImporter {
 
 
     private long createNode(Node node) {
-        Map<String, Object> properties = genericMap(NAME_KEY, node.id, TYPE_KEY);
+        Map<String, Object> properties = genericMap(NAME_KEY, node.id);
 
         long newNode = batchInserter.createNode(properties);
 
