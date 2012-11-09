@@ -3,18 +3,15 @@ package info.gehrels.diplomarbeit.neo4j;
 import com.google.common.base.Stopwatch;
 import com.twitter.flockdb.thrift.FlockException;
 import info.gehrels.flockDBClient.FlockDB;
-import info.gehrels.flockDBClient.PagedNodeIdList;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
-import static info.gehrels.flockDBClient.SelectionQuery.union;
+import static info.gehrels.diplomarbeit.neo4j.FlockDBHelper.getAllOutgoingRelationshipsFor;
 
 public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator {
 	private final FlockDB graphDb;
@@ -60,7 +57,7 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 		long mySccRoot = depthFirstVisitIndex;
 		sccCandidatesStack.push(nodeId);
 
-		for (Long endNode : getAllOutgoingRelationshipsFor(nodeId)) {
+		for (Long endNode : getAllOutgoingRelationshipsFor(graphDb, nodeId)) {
 			if (!alreadyVisitedNodes.contains(endNode)) {
 				long endNodesSccRoot = calculateStronglyConnectedComponentsDepthFirst(endNode);
 				// Wenn endNode.sccId < my.sccId, dann haben wir einen Rückwärstpfad zu einem Knoten gefunden,
@@ -86,58 +83,6 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 
 		return mySccRoot;
 
-	}
-
-	private Iterable<Long> getAllOutgoingRelationshipsFor(long nodeId) throws IOException, FlockException {
-		final PagedNodeIdList result = graphDb.select(
-			union(
-				union(
-					union(
-						simpleSelection(nodeId, 1, true),
-						simpleSelection(nodeId, 2, true)
-					),
-					simpleSelection(nodeId, 3, true)
-				),
-				simpleSelection(nodeId, 4, true)
-			)
-		).execute().get(0);
-
-		return new Iterable<Long>() {
-			@Override
-			public Iterator<Long> iterator() {
-				return new Iterator<Long>() {
-					PagedNodeIdList currentResultPage = result;
-					Iterator<Long> myIterator = result.iterator();
-					@Override
-					public boolean hasNext() {
-						if (myIterator.hasNext()) {
-							return true;
-						}
-
-						if (currentResultPage.hasNextPage()) {
-							try {
-								currentResultPage = currentResultPage.getNextPage();
-								myIterator = currentResultPage.iterator();
-							} catch (Exception e) {
-								throw new IllegalStateException(e);
-							}
-						}
-
-						return myIterator.hasNext();
-					}
-
-					@Override
-					public Long next() {
-						return myIterator.next();
-					}
-
-					@Override
-					public void remove() {
-						throw new UnsupportedOperationException();
-					}
-				};
-			}
-		};
 	}
 
 	private static void registerShutdownHook(final FlockDB graphDb) {
