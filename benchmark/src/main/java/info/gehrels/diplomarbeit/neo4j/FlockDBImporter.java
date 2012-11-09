@@ -29,7 +29,6 @@ public class FlockDBImporter {
 	}
 
 	public FlockDBImporter importNow() throws IOException, FlockException {
-		executionBuilder = flockDB.batchExecution(Priority.High);
 		for (GraphElement elem : new GeoffStreamParser(inputStream)) {
 			if (elem instanceof Edge) {
 				Edge edge = (Edge) elem;
@@ -39,13 +38,14 @@ public class FlockDBImporter {
 			}
 		}
 
-		executionBuilder.execute();
 		return this;
 	}
 
 	private void createEdge(long from, long to, String label) throws IOException, FlockException {
+		executionBuilder = flockDB.batchExecution(Priority.High);
 		executionBuilder
 			.add(from, Integer.valueOf(label.substring(1)), new Date().getTime(), true, to);
+		executionBuilder.execute();
 	}
 
 	public void shutdown() {
