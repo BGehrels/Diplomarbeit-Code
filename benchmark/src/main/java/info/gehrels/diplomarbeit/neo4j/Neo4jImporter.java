@@ -18,8 +18,9 @@ import static org.neo4j.helpers.collection.MapUtil.genericMap;
 
 public class Neo4jImporter {
     static final String NAME_KEY = "name";
+	public static final String NODE_INDEX_NAME = "nodes";
 
-    private final Map<Long, Long> nodeCache = new HashMap<>(200000);
+	private final Map<Long, Long> nodeCache = new HashMap<>(200000);
     private final BatchInserter batchInserter;
     private FileInputStream inputStream;
     private final BatchInserterIndex nodeIndex;
@@ -44,7 +45,7 @@ public class Neo4jImporter {
         batchInserter = BatchInserters.inserter(graphDbFolder);
 
         indexProvider = new LuceneBatchInserterIndexProvider(batchInserter);
-        nodeIndex = indexProvider.nodeIndex("nodes", MapUtil.<String, String>genericMap("type", "exact"));
+        nodeIndex = indexProvider.nodeIndex(NODE_INDEX_NAME, MapUtil.<String, String>genericMap("type", "exact"));
     }
 
     public Neo4jImporter importNow() {
