@@ -12,12 +12,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-public class Neo4jStronglyConnectedComponents {
+public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator {
 	private final GraphDatabaseService graphDb;
 	private Set<Long> alreadyVisitedNodes;
 	private long depthFirstVisitIndex;
 	private Map<Long, Long> nodeToDfbiMap;
-	private Stack<Long> sccCandidatesStack;
 
 	public static void main(String... args) {
 		Stopwatch stopwatch = new Stopwatch().start();
@@ -85,18 +84,6 @@ public class Neo4jStronglyConnectedComponents {
 
 		return mySccRoot;
 
-	}
-
-	private void printOutSCC(Long nodeName) {
-		StringBuilder sccResultString = new StringBuilder("SCC: ");
-		Long pop;
-		do {
-			pop = sccCandidatesStack.pop();
-
-			sccResultString.append(pop).append(",");
-		} while (!pop.equals(nodeName));
-
-		System.out.println(sccResultString);
 	}
 
 	private static void registerShutdownHook(final GraphDatabaseService graphDb) {
