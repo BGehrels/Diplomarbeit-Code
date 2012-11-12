@@ -6,7 +6,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.traversal.Evaluators;
 import org.neo4j.kernel.Traversal;
@@ -15,7 +14,7 @@ import java.io.IOException;
 
 public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
 
-	private GraphDatabaseService graphDb;
+	private final GraphDatabaseService graphDb;
 
 	public static void main(String... args) throws IOException, FlockException {
 		Stopwatch stopwatch = new Stopwatch().start();
@@ -26,8 +25,7 @@ public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
 
 	public Neo4jFriendsOfFriends(String dbPath, long maxNodeId) {
 		super(maxNodeId);
-		graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbPath);
-		registerShutdownHook(graphDb);
+		graphDb = Neo4jHelper.createNeo4jDatabase(dbPath);
 	}
 
 	@Override
@@ -50,12 +48,4 @@ public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
 		}
 	}
 
-	private static void registerShutdownHook(final GraphDatabaseService graphDb) {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				graphDb.shutdown();
-			}
-		});
-	}
 }
