@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class RandomNodeIdGenerator implements Iterable<Integer> {
-	public static final Random RANDOM = new Random(1);
+	private static int seed = 1;
+
+	private final Random random = new Random(seed++);
 	private final LinkedList<Integer> nodeIdPool = new LinkedList<>();
 	private int remainingNumberOfResults;
 
@@ -28,7 +30,7 @@ public class RandomNodeIdGenerator implements Iterable<Integer> {
 			public Integer next() {
 				System.out.println(remainingNumberOfResults);
 				remainingNumberOfResults--;
-				return nodeIdPool.remove(RANDOM.nextInt(nodeIdPool.size()));
+				return nodeIdPool.remove(random.nextInt(nodeIdPool.size()));
 			}
 
 			@Override
