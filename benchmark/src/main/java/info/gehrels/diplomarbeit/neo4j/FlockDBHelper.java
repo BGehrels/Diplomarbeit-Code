@@ -5,7 +5,6 @@ import info.gehrels.flockDBClient.FlockDB;
 import info.gehrels.flockDBClient.PagedNodeIdList;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
 import static info.gehrels.flockDBClient.SelectionQuery.union;
@@ -26,42 +25,7 @@ public class FlockDBHelper {
 			)
 		).execute().get(0);
 
-		return new Iterable<Long>() {
-			@Override
-			public Iterator<Long> iterator() {
-				return new Iterator<Long>() {
-					PagedNodeIdList currentResultPage = result;
-					Iterator<Long> myIterator = result.iterator();
-					@Override
-					public boolean hasNext() {
-						if (myIterator.hasNext()) {
-							return true;
-						}
-
-						if (currentResultPage.hasNextPage()) {
-							try {
-								currentResultPage = currentResultPage.getNextPage();
-								myIterator = currentResultPage.iterator();
-							} catch (Exception e) {
-								throw new IllegalStateException(e);
-							}
-						}
-
-						return myIterator.hasNext();
-					}
-
-					@Override
-					public Long next() {
-						return myIterator.next();
-					}
-
-					@Override
-					public void remove() {
-						throw new UnsupportedOperationException();
-					}
-				};
-			}
-		};
+		return new NonPagedResultList(result);
 	}
 
 	static FlockDB createFlockDB() throws IOException {
@@ -78,4 +42,5 @@ public class FlockDBHelper {
 			}
 		});
 	}
+
 }
