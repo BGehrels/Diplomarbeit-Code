@@ -42,8 +42,8 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 
 	@Override
 	protected void calculateCommonFriends(int id1, int id2) {
-		//calculateCommonFriendsUsingCypher(id1, id2);
-		calculateCommonFriendsUsingPureTraversal(id1, id2);
+		calculateCommonFriendsUsingCypher(id1, id2);
+		//calculateCommonFriendsUsingPureTraversal(id1, id2);
 		//calculateCommonFriendsUsingTwoManualTraversals(id1, id2);
 	}
 
@@ -114,9 +114,11 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 
 	private void calculateCommonFriendsUsingCypher(int id1, int id2) {
 		ExecutionEngine cypher = new ExecutionEngine(graphDB);
-		ExecutionResult result = cypher.execute("start n=node({id1}), m=node({id2}) "
-		                                        + "match m-[:L1]->x<-[:L1]-n "
-		                                        + "return x.name as x ",
+		ExecutionResult result = cypher.execute("start " +
+		                                        "n=node:" + Neo4jImporter.NODE_INDEX_NAME + "(" + NAME_KEY + "=\"{id1}\"), " +
+		                                        "m=node:" + Neo4jImporter.NODE_INDEX_NAME + "(" + NAME_KEY + "=\"{id2}\") " +
+		                                        "match m-[:L1]->x<-[:L1]-n " +
+		                                        "return x.name as x ",
 		                                        MapUtil.<String, Object>genericMap("id1", id1, "id2", id2));
 
 		for (Object x : IteratorUtil.asIterable(result.columnAs("x"))) {
