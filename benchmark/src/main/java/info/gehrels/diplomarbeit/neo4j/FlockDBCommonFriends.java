@@ -34,8 +34,8 @@ public class FlockDBCommonFriends {
 		PagedNodeIdList nodes = graphDb.select(intersect(simpleSelection(id1, 1, true), simpleSelection(id2, 1, true)))
 			.execute().get(0);
 
+
 		for (Long nodeId : new NonPagedResultList(nodes)) {
-			System.out.println(nodeId);
 		}
 	}
 }
