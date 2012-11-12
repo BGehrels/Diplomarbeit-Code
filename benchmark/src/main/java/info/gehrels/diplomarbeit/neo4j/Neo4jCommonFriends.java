@@ -10,7 +10,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.PathExpander;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.traversal.BranchState;
 import org.neo4j.graphdb.traversal.Evaluation;
 import org.neo4j.graphdb.traversal.Evaluator;
@@ -19,11 +18,14 @@ import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.kernel.Traversal;
 
 import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NAME_KEY;
 import static java.lang.Integer.parseInt;
 
 public class Neo4jCommonFriends extends AbstractCommonFriends {
+	public static final DynamicRelationshipType L1 = DynamicRelationshipType.withName("L1");
 	private GraphDatabaseService graphDB;
 
 	public static void main(String[] args) throws Exception {
@@ -40,8 +42,29 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 
 	@Override
 	protected void calculateCommonFriends(int id1, int id2) {
-		calculateCommonFriendsUsingCypher(id1, id2);
+		//calculateCommonFriendsUsingCypher(id1, id2);
 		calculateCommonFriendsUsingPureTraversal(id1, id2);
+		//calculateCommonFriendsUsingTwoManualTraversals(id1, id2);
+	}
+
+	private void calculateCommonFriendsUsingTwoManualTraversals(int id1, int id2) {
+		Node id1Node = graphDB.index().forNodes(Neo4jImporter.NODE_INDEX_NAME).get(NAME_KEY, id1).next();
+		final Node id2Node = graphDB.index().forNodes(Neo4jImporter.NODE_INDEX_NAME).get(NAME_KEY, id2)
+			.next();
+
+		Set<Long> id1Friends = new TreeSet<>();
+		for (Relationship rel  : id1Node.getRelationships(L1, Direction.OUTGOING)) {
+			id1Friends.add((Long) rel.getEndNode().getProperty(Neo4jImporter.NAME_KEY));
+		}
+
+		Set<Long> id2Friends = new TreeSet<>();
+		for (Relationship rel  : id2Node.getRelationships(L1, Direction.OUTGOING)) {
+			id2Friends.add((Long) rel.getEndNode().getProperty(Neo4jImporter.NAME_KEY));
+		}
+
+		id1Friends.retainAll(id2Friends);
+
+		System.out.println(id1Friends);
 	}
 
 	private void calculateCommonFriendsUsingPureTraversal(int id1, int id2) {
@@ -50,7 +73,6 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 			.next();
 
 
-		final RelationshipType l1 = DynamicRelationshipType.withName("L1");
 		Iterable<Path> pathTraversal =
 			Traversal
 				.traversal()
@@ -59,8 +81,8 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 					@Override
 					public Iterable<Relationship> expand(Path path, BranchState<Object> state) {
 						return path.length() == 0 ?
-							path.endNode().getRelationships(l1, Direction.OUTGOING) :
-							path.endNode().getRelationships(l1, Direction.INCOMING);
+							path.endNode().getRelationships(L1, Direction.OUTGOING) :
+							path.endNode().getRelationships(L1, Direction.INCOMING);
 					}
 
 					@Override
