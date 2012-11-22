@@ -3,7 +3,6 @@ package info.gehrels.diplomarbeit.neo4j;
 import com.google.common.base.Stopwatch;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 public class Neo4jReadWholeGraph {
@@ -17,6 +16,10 @@ public class Neo4jReadWholeGraph {
 		System.out.println(stopwatch);
 	}
 
+	public Neo4jReadWholeGraph(String dbPath) {
+		graphDb = Neo4jHelper.createNeo4jDatabase(dbPath);
+	}
+
 	private Neo4jReadWholeGraph readWholeGraph() {
 		for (Relationship relationship : GlobalGraphOperations.at(graphDb).getAllRelationships()) {
 			relationship.getStartNode().getProperty(Neo4jImporter.NAME_KEY);
@@ -26,19 +29,5 @@ public class Neo4jReadWholeGraph {
 			}
 		}
 		return this;
-	}
-
-	public Neo4jReadWholeGraph(String dbPath) {
-		graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbPath);
-		registerShutdownHook(graphDb);
-	}
-
-	private static void registerShutdownHook(final GraphDatabaseService graphDb) {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				graphDb.shutdown();
-			}
-		});
 	}
 }

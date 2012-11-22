@@ -1,9 +1,10 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
-import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 import java.util.HashMap;
@@ -26,8 +27,7 @@ public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedC
 	}
 
 	public Neo4jStronglyConnectedComponents(String dbPath) {
-		graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbPath);
-		registerShutdownHook(graphDb);
+		graphDb = Neo4jHelper.createNeo4jDatabase(dbPath);
 	}
 
 	private Neo4jStronglyConnectedComponents calculateStronglyConnectedComponents() {
