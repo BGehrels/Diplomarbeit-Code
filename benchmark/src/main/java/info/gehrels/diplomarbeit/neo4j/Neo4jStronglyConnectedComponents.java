@@ -7,17 +7,10 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.Iterator;
 
-public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<GraphDatabaseService> {
-	private Set<Long> alreadyVisitedNodes;
-	private long depthFirstVisitIndex;
-	private Map<Long, Long> nodeToDfbiMap;
-
-	public static void main(String... args) {
+public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<GraphDatabaseService, Node> {
+	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
 		new Neo4jStronglyConnectedComponents(args[0]).calculateStronglyConnectedComponents();
 		stopwatch.stop();
@@ -28,58 +21,74 @@ public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedC
 		super(Neo4jHelper.createNeo4jDatabase(dbPath));
 	}
 
-	private Neo4jStronglyConnectedComponents calculateStronglyConnectedComponents() {
-		alreadyVisitedNodes = new HashSet<>();
-		depthFirstVisitIndex = 0;
-		nodeToDfbiMap = new HashMap<>();
+	@Override
+	protected Iterable<Node> getAllNodes() {
+		final Iterator<Node> iterator = GlobalGraphOperations.at(graphDB).getAllNodes().iterator();
+		return new Iterable<Node>() {
+			@Override
+			public Iterator<Node> iterator() {
+				return new Iterator<Node>() {
 
-		for (Node node : GlobalGraphOperations.at(graphDB).getAllNodes()) {
-			if (node.getId() == 0)
-				continue;
-			Long nodeName = (Long) node.getProperty(Neo4jImporter.NAME_KEY);
-			if (!alreadyVisitedNodes.contains(nodeName)) {
-				calculateStronglyConnectedComponentsDepthFirst(node);
+					public Node next;
+
+					@Override
+					public boolean hasNext() {
+						ensureNextIsFetched();
+						return next != null;
+					}
+
+					private void ensureNextIsFetched() {
+						if (next == null && iterator.hasNext()) {
+							next = iterator.next();
+						}
+
+						if (next.getId() == 0) {
+							next = null;
+							ensureNextIsFetched();
+						}
+					}
+
+					@Override
+					public Node next() {
+						ensureNextIsFetched();
+						return next;
+					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
 			}
-		}
-
-		return this;
+		};
 	}
 
-	private long calculateStronglyConnectedComponentsDepthFirst(Node node) {
-		Long nodeName = (Long) node.getProperty(Neo4jImporter.NAME_KEY);
-		alreadyVisitedNodes.add(nodeName);
-		depthFirstVisitIndex++;
-		nodeToDfbiMap.put(nodeName, depthFirstVisitIndex);
-		long mySccRoot = depthFirstVisitIndex;
-		sccCandidatesStack.push(nodeName);
+	protected long getNodeName(Node endNode) {
+		return (Long) endNode.getProperty(Neo4jImporter.NAME_KEY);
+	}
 
-		for (Relationship relationship : node.getRelationships(Direction.OUTGOING)) {
-			Node endNode = relationship.getEndNode();
-			Long endNodeName = (Long) endNode.getProperty(Neo4jImporter.NAME_KEY);
-			if (!alreadyVisitedNodes.contains(endNodeName)) {
-				long endNodesSccRoot = calculateStronglyConnectedComponentsDepthFirst(endNode);
-				// Wenn endNode.sccId < my.sccId, dann haben wir einen Rückwärstpfad zu einem Knoten gefunden,
-				// der weiter hinten im Call-Stack liegt
-				mySccRoot = Math.min(
-					mySccRoot,
-					endNodesSccRoot
-				);
-			} else if (sccCandidatesStack.contains(endNodeName)) {
-				// Mit ein wenig glück führt uns diese Kante sogar noch weiter zurück in die eigene Geschichte als die
-				// bisher gefundenen Rückwärtspfade
-				mySccRoot = Math.min(
-					mySccRoot,
-					nodeToDfbiMap.get(endNodeName)
-				);
+	protected Iterable<Node> getOutgoingIncidentNodes(Node node) {
+		final Iterator<Relationship> relationships = node.getRelationships(Direction.OUTGOING).iterator();
+		return new Iterable<Node>() {
+			@Override
+			public Iterator<Node> iterator() {
+				return new Iterator<Node>() {
+					@Override
+					public boolean hasNext() {
+						return relationships.hasNext();
+					}
+
+					@Override
+					public Node next() {
+						return relationships.next().getEndNode();
+					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
 			}
-		}
-
-		if (mySccRoot == nodeToDfbiMap.get(nodeName)) {
-			// Wir haben den zuerst touchierten Knoten einer SCC gefunden
-			printOutSCC(nodeName);
-		}
-
-		return mySccRoot;
-
+		};
 	}
 }
