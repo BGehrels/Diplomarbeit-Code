@@ -9,7 +9,8 @@ import org.neo4j.tooling.GlobalGraphOperations;
 
 import java.util.Iterator;
 
-public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<GraphDatabaseService, Node> {
+public class Neo4jStronglyConnectedComponents
+	extends AbstractStronglyConnectedComponentsCalculator<GraphDatabaseService, Node> {
 	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
 		new Neo4jStronglyConnectedComponents(args[0]).calculateStronglyConnectedComponents();
@@ -23,21 +24,10 @@ public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedC
 
 	@Override
 	protected Iterable<Node> getAllNodes() {
-		final Iterator<Node> iterator = GlobalGraphOperations.at(graphDB).getAllNodes().iterator();
-		return new Iterable<Node>() {
+		return new PrefetchingIterableIterator<Node>() {
+			private final Iterator<Node> iterator = GlobalGraphOperations.at(graphDB).getAllNodes().iterator();
 			@Override
-			public Iterator<Node> iterator() {
-				return new Iterator<Node>() {
-
-					public Node next;
-
-					@Override
-					public boolean hasNext() {
-						ensureNextIsFetched();
-						return next != null;
-					}
-
-					private void ensureNextIsFetched() {
+			protected void ensureNextIsFetched() {
 						if (next == null && iterator.hasNext()) {
 							next = iterator.next();
 						}
@@ -47,21 +37,6 @@ public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedC
 							ensureNextIsFetched();
 						}
 					}
-
-					@Override
-					public Node next() {
-						ensureNextIsFetched();
-						Node nodeToReturn = next;
-						next = null;
-						return nodeToReturn;
-					}
-
-					@Override
-					public void remove() {
-						throw new UnsupportedOperationException();
-					}
-				};
-			}
 		};
 	}
 
@@ -93,4 +68,5 @@ public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedC
 			}
 		};
 	}
+
 }

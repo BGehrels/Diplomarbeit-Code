@@ -4,7 +4,7 @@ import com.google.common.base.Stopwatch;
 import info.gehrels.flockDBClient.FlockDB;
 
 import java.io.IOException;
-import java.util.Iterator;
+
 import static info.gehrels.diplomarbeit.neo4j.FlockDBHelper.getAllOutgoingRelationshipsFor;
 
 public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<FlockDB, Long> {
@@ -25,27 +25,17 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 
 	@Override
 	protected Iterable<Long> getAllNodes() {
-		return new Iterable<Long>() {
+		return new IterableIterator<Long>() {
+			public long nextId;
+
 			@Override
-			public Iterator<Long> iterator() {
-				return new Iterator<Long>() {
-					public long nextId;
+			public boolean hasNext() {
+				return nextId <= maxNodeId;
+			}
 
-					@Override
-					public boolean hasNext() {
-						return nextId <= maxNodeId;
-					}
-
-					@Override
-					public Long next() {
-						return hasNext() ? nextId++ : null;
-					}
-
-					@Override
-					public void remove() {
-						throw new UnsupportedOperationException();
-					}
-				};
+			@Override
+			public Long next() {
+				return hasNext() ? nextId++ : null;
 			}
 		};
 	}
@@ -59,4 +49,5 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 	protected Iterable<Long> getOutgoingIncidentNodes(Long node) throws Exception {
 		return getAllOutgoingRelationshipsFor(graphDB, node);
 	}
+
 }
