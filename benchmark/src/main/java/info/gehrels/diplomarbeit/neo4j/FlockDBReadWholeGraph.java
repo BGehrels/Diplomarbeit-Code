@@ -8,10 +8,14 @@ import info.gehrels.flockDBClient.SelectionQuery;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class FlockDBReadWholeGraph {
 	private FlockDB flockDB;
 	private final long maxNodeId;
+
+	int numberOfResults = 0;
 
 	public FlockDBReadWholeGraph(long maxNodeId) throws IOException {
 		this.maxNodeId = maxNodeId;
@@ -30,25 +34,37 @@ public class FlockDBReadWholeGraph {
 	}
 
 	private FlockDBReadWholeGraph readWholeGraph() throws IOException, FlockException {
-		for (byte graphId = 1; graphId <= 15; graphId++) {
-			for (long nodeId = 0; nodeId <= maxNodeId; nodeId++) {
-				readAllEdgesForNode(graphId, nodeId);
+		for (long nodeId = 0; nodeId <= maxNodeId; nodeId++) {
+			SortedSet<Triplet<Long,Long,Byte>> results = new TreeSet<>();
+			for (byte graphId = 1; graphId <= 15; graphId++) {
+				readAllEdgesForNode(graphId, nodeId, results);
 			}
+
+			printOutResults(results);
 		}
+		System.out.println(numberOfResults);
 		return this;
 	}
 
-	private void readAllEdgesForNode(byte graphId, long nodeId) throws IOException, FlockException {
-		List<PagedNodeIdList> result
-			= flockDB
-			.select(SelectionQuery.simpleSelection(nodeId, graphId, false))
-			.execute();
-		for (PagedNodeIdList singleQueryResult : result) {
-			readWholeNodeIdList(graphId, nodeId, singleQueryResult);
+	private void printOutResults(SortedSet<Triplet<Long,Long,Byte>> results) {
+		for (Triplet result : results) {
+			System.out.println(result.elem1 + ", L" + result.elem3 + ", " + result.elem2);
+			numberOfResults++;
 		}
 	}
 
-	private void readWholeNodeIdList(byte graphId, long nodeId, PagedNodeIdList singleQueryResult) throws IOException,
+	private void readAllEdgesForNode(byte graphId, long nodeId, SortedSet<Triplet<Long,Long,Byte>> results) throws IOException, FlockException {
+		List<PagedNodeIdList> result
+			= flockDB
+			.select(SelectionQuery.simpleSelection(nodeId, graphId, true))
+			.execute();
+		for (PagedNodeIdList singleQueryResult : result) {
+			readWholeNodeIdList(graphId, nodeId, singleQueryResult, results);
+		}
+	}
+
+	private void readWholeNodeIdList(byte graphId, long nodeId, PagedNodeIdList singleQueryResult,
+	                                 SortedSet<Triplet<Long,Long,Byte>> results) throws IOException,
 		FlockException {
 		boolean first = true;
 		do {
@@ -59,7 +75,7 @@ public class FlockDBReadWholeGraph {
 			}
 
 			for (Long destNodeId : singleQueryResult) {
-				long blubb = graphId + nodeId + destNodeId;
+				results.add(new Triplet<>(nodeId, destNodeId, graphId));
 			}
 		} while (singleQueryResult.hasNextPage());
 	}

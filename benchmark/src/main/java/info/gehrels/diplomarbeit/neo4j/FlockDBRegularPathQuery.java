@@ -20,7 +20,7 @@ public class FlockDBRegularPathQuery extends AbstractRegularPathQuery<FlockDB>{
 
 	@Override
 	protected void calculateRegularPaths(int aNode) throws FlockException, IOException {
-		SortedSet<Triplet<Long>> results = new TreeSet<>();
+		SortedSet<Triplet<Long, Long, Long>> results = new TreeSet<>();
 
 		NonPagedResultList cResultList = new NonPagedResultList(
 			graphDB.select(SelectionQuery.simpleSelection(aNode, 3, false)).execute().get(0));
@@ -39,39 +39,9 @@ public class FlockDBRegularPathQuery extends AbstractRegularPathQuery<FlockDB>{
 			}
 		}
 
-		for (Triplet<Long> result : results) {
+		for (Triplet<Long, Long, Long> result : results) {
 			System.out.println(result);
 		}
 	}
 
-	private static class Triplet<T extends Comparable<T>> implements Comparable<Triplet<T>>{
-
-		public final T elem1;
-		public final T elem2;
-		public final T elem3;
-
-		public Triplet(T elem1, T elem2, T elem3) {
-			this.elem1 = elem1;
-			this.elem2 = elem2;
-			this.elem3 = elem3;
-		}
-
-		@Override
-		public int compareTo(Triplet<T> o) {
-			int result = elem1.compareTo(o.elem1);
-			if (result == 0) {
-				result = elem2.compareTo(o.elem2);
-			}
-
-			if (result == 0) {
-				result = elem3.compareTo(o.elem3);
-			}
-			return result;
-		}
-
-		@Override
-		public String toString() {
-			return elem1 + ", " + elem2 + ", " + elem3;
-		}
-	}
 }
