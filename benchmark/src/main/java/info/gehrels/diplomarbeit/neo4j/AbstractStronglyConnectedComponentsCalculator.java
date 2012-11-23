@@ -12,6 +12,7 @@ public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NOD
 	private Set<Long> alreadyVisitedNodes;
 	private long depthFirstVisitIndex;
 	private Map<Long, Long> nodeToDfbiMap;
+	private  SortedSet<String> sccs;
 
 	protected final Stack<Long> sccCandidatesStack = new Stack<>();
 	protected final DB_TYPE graphDB;
@@ -24,6 +25,7 @@ public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NOD
 		alreadyVisitedNodes = new HashSet<>();
 		depthFirstVisitIndex = 0;
 		nodeToDfbiMap = new HashMap<>();
+		sccs = new TreeSet<>();
 
 		for (NODE_TYPE node : getAllNodes()) {
 			Long nodeName = getNodeName(node);
@@ -31,6 +33,8 @@ public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NOD
 				calculateStronglyConnectedComponentsDepthFirst(node);
 			}
 		}
+
+		printOutSCCStrings();
 	}
 
 	private long calculateStronglyConnectedComponentsDepthFirst(NODE_TYPE node) throws Exception {
@@ -63,13 +67,19 @@ public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NOD
 
 		if (mySccRoot == nodeToDfbiMap.get(nodeName)) {
 			// Wir haben den zuerst touchierten Knoten einer SCC gefunden
-			printOutSCC(nodeName);
+			sccs.add(createResultSCCString(nodeName));
 		}
 
 		return mySccRoot;
 	}
 
-	protected void printOutSCC(long nodeName) {
+	private void printOutSCCStrings() {
+		for (String scc : sccs) {
+			System.out.println(scc);
+		}
+	}
+
+	protected String createResultSCCString(long nodeName) {
 		SortedSet<Long> sortedNodeIds = new TreeSet<>();
 		Long pop;
 		do {
@@ -77,7 +87,7 @@ public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NOD
 			sortedNodeIds.add(pop);
 		} while (!pop.equals(nodeName));
 
-		System.out.println("SCC: " + sortedNodeIds);
+		return "SCC: " + sortedNodeIds;
 	}
 
 	protected abstract Iterable<NODE_TYPE> getAllNodes();
