@@ -11,10 +11,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
-public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator {
-	private final GraphDatabaseService graphDb;
+public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<GraphDatabaseService> {
 	private Set<Long> alreadyVisitedNodes;
 	private long depthFirstVisitIndex;
 	private Map<Long, Long> nodeToDfbiMap;
@@ -27,16 +25,15 @@ public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedC
 	}
 
 	public Neo4jStronglyConnectedComponents(String dbPath) {
-		graphDb = Neo4jHelper.createNeo4jDatabase(dbPath);
+		super(Neo4jHelper.createNeo4jDatabase(dbPath));
 	}
 
 	private Neo4jStronglyConnectedComponents calculateStronglyConnectedComponents() {
 		alreadyVisitedNodes = new HashSet<>();
 		depthFirstVisitIndex = 0;
 		nodeToDfbiMap = new HashMap<>();
-		sccCandidatesStack = new Stack<>();
 
-		for (Node node : GlobalGraphOperations.at(graphDb).getAllNodes()) {
+		for (Node node : GlobalGraphOperations.at(graphDB).getAllNodes()) {
 			if (node.getId() == 0)
 				continue;
 			Long nodeName = (Long) node.getProperty(Neo4jImporter.NAME_KEY);
@@ -84,14 +81,5 @@ public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedC
 
 		return mySccRoot;
 
-	}
-
-	private static void registerShutdownHook(final GraphDatabaseService graphDb) {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				graphDb.shutdown();
-			}
-		});
 	}
 }

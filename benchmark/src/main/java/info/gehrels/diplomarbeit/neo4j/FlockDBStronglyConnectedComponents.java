@@ -9,12 +9,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import static info.gehrels.diplomarbeit.neo4j.FlockDBHelper.getAllOutgoingRelationshipsFor;
 
-public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator {
-	private final FlockDB graphDb;
+public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<FlockDB> {
 	private Set<Long> alreadyVisitedNodes;
 	private long depthFirstVisitIndex;
 	private Map<Long, Long> nodeToDfbiMap;
@@ -28,8 +26,7 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 	}
 
 	public FlockDBStronglyConnectedComponents(long maxNodeId) throws IOException {
-		graphDb = new FlockDB("localhost", 7915, 1000000);
-		registerShutdownHook(graphDb);
+		super(FlockDBHelper.createFlockDB());
 
 		this.maxNodeId = maxNodeId;
 	}
@@ -39,7 +36,6 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 		alreadyVisitedNodes = new HashSet<>();
 		depthFirstVisitIndex = 0;
 		nodeToDfbiMap = new HashMap<>();
-		sccCandidatesStack = new Stack<>();
 
 		for (long nodeId = 0; nodeId <= maxNodeId; nodeId++) {
 			if (!alreadyVisitedNodes.contains(nodeId)) {
@@ -57,7 +53,7 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 		long mySccRoot = depthFirstVisitIndex;
 		sccCandidatesStack.push(nodeId);
 
-		for (Long endNode : getAllOutgoingRelationshipsFor(graphDb, nodeId)) {
+		for (Long endNode : getAllOutgoingRelationshipsFor(graphDB, nodeId)) {
 			if (!alreadyVisitedNodes.contains(endNode)) {
 				long endNodesSccRoot = calculateStronglyConnectedComponentsDepthFirst(endNode);
 				// Wenn endNode.sccId < my.sccId, dann haben wir einen Rückwärstpfad zu einem Knoten gefunden,
@@ -83,14 +79,5 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 
 		return mySccRoot;
 
-	}
-
-	private static void registerShutdownHook(final FlockDB graphDb) {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				graphDb.close();
-			}
-		});
 	}
 }
