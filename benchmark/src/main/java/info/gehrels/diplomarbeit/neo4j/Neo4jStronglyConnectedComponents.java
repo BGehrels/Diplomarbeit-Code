@@ -42,7 +42,7 @@ public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedC
 							next = iterator.next();
 						}
 
-						if (next.getId() == 0) {
+						if (next != null && next.getId() == 0) {
 							next = null;
 							ensureNextIsFetched();
 						}
@@ -51,7 +51,9 @@ public class Neo4jStronglyConnectedComponents extends AbstractStronglyConnectedC
 					@Override
 					public Node next() {
 						ensureNextIsFetched();
-						return next;
+						Node nodeToReturn = next;
+						next = null;
+						return nodeToReturn;
 					}
 
 					@Override
