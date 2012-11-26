@@ -14,13 +14,13 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 
 	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBStronglyConnectedComponents(Long.parseLong(args[0])).calculateStronglyConnectedComponents();
+		new FlockDBStronglyConnectedComponents(FlockDBHelper.createFlockDB(), Long.parseLong(args[0])).calculateStronglyConnectedComponents();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
 
-	public FlockDBStronglyConnectedComponents(long maxNodeId) throws IOException {
-		super(FlockDBHelper.createFlockDB());
+	public FlockDBStronglyConnectedComponents(FlockDB flockDB, long maxNodeId) throws IOException {
+		super(flockDB);
 
 		this.maxNodeId = maxNodeId;
 	}

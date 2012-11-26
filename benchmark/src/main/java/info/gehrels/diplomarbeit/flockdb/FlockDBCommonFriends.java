@@ -15,12 +15,12 @@ public class FlockDBCommonFriends extends AbstractCommonFriends {
 	private FlockDB graphDb;
 
 	public static void main(String[] args) throws Exception {
-		new FlockDBCommonFriends(Integer.parseInt(args[0])).calculateCommonFriends();
+		new FlockDBCommonFriends(FlockDBHelper.createFlockDB(), Integer.parseInt(args[0])).calculateCommonFriends();
 	}
 
-	public FlockDBCommonFriends(long maxNodeId) throws IOException {
+	public FlockDBCommonFriends(FlockDB flockDB, long maxNodeId) throws IOException {
 		super(maxNodeId);
-		graphDb = FlockDBHelper.createFlockDB();
+		graphDb = flockDB;
 	}
 
 	@Override

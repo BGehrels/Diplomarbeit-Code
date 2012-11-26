@@ -46,7 +46,7 @@ for f in geoff/*.geoff
 do
 	echo "Running benchmark for $f";
 
-	for db in neo4j
+	for db in flockdb neo4j
 	do
 		runBenchmark `basename $f` $db
 	done

@@ -23,7 +23,7 @@ public abstract class AbstractBenchmarkStep {
 
 	}
 
-	public void execute() throws Exception {
+	public final void execute() throws Exception {
 		switch (algorithm) {
 			case "import":
 				runImporter(inputPath);
@@ -51,7 +51,7 @@ public abstract class AbstractBenchmarkStep {
 
 	protected abstract void runImporter(String inputPath) throws Exception;
 
-	protected abstract void readWholeGraph();
+	protected abstract void readWholeGraph() throws Exception;
 
 	protected abstract void calcSCC() throws Exception;
 

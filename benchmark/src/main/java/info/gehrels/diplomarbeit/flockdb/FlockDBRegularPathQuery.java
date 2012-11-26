@@ -15,10 +15,10 @@ import static java.lang.Integer.parseInt;
 
 public class FlockDBRegularPathQuery extends AbstractRegularPathQuery<FlockDB> {
 	public static void main(String[] args) throws Exception {
-		new FlockDBRegularPathQuery(parseInt(args[0])).calculateRegularPaths();
+		new FlockDBRegularPathQuery(FlockDBHelper.createFlockDB(), parseInt(args[0])).calculateRegularPaths();
 	}
-	public FlockDBRegularPathQuery(int maxNodeId) throws IOException {
-		super(FlockDBHelper.createFlockDB(), maxNodeId);
+	public FlockDBRegularPathQuery(FlockDB flockDB, long maxNodeId) throws IOException {
+		super(flockDB, maxNodeId);
 	}
 
 	@Override

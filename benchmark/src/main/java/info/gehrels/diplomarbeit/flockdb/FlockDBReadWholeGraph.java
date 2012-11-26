@@ -17,14 +17,14 @@ public class FlockDBReadWholeGraph {
 
 	int numberOfResults = 0;
 
-	public FlockDBReadWholeGraph(long maxNodeId) throws IOException {
+	public FlockDBReadWholeGraph(FlockDB db, long maxNodeId) throws IOException {
 		this.maxNodeId = maxNodeId;
-		flockDB = new FlockDB("localhost", 7915, 1000000);
+		flockDB = db;
 	}
 
 	public static void main(String... args) throws IOException, FlockException {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBReadWholeGraph(Long.parseLong(args[0])).readWholeGraph(true).shutdown();
+		new FlockDBReadWholeGraph(new FlockDB("localhost", 7915, 1000000), Long.parseLong(args[0])).readWholeGraph(true).shutdown();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
@@ -34,7 +34,7 @@ public class FlockDBReadWholeGraph {
 	}
 
 	// TODO: Statt dessen vielleicht UNION Query? oder mehrere Parallele?
-	private FlockDBReadWholeGraph readWholeGraph(boolean writeToStdOut) throws IOException, FlockException {
+	public FlockDBReadWholeGraph readWholeGraph(boolean writeToStdOut) throws IOException, FlockException {
 		for (long nodeId = 0; nodeId <= maxNodeId; nodeId++) {
 			for (byte graphId = 1; graphId <= 15; graphId++) {
 				readAllEdgesForNode(graphId, nodeId, writeToStdOut);
