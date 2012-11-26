@@ -23,7 +23,7 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
 	@Override
 	protected void readWholeGraph() {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(DB_FOLDER)).readWholeGraph();
+		new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(DB_FOLDER)).readWholeGraph(true);
 		stopwatch.stop();
 		System.err.println(stopwatch);
 	}
@@ -67,7 +67,7 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
 
 	private void warmUpDatabaseAndMeasure(Measurement measurement) throws Exception {
 		GraphDatabaseService neo4jDatabase = Neo4jHelper.createNeo4jDatabase(DB_FOLDER);
-		new Neo4jReadWholeGraph(neo4jDatabase).readWholeGraph();
+		new Neo4jReadWholeGraph(neo4jDatabase).readWholeGraph(false);
 		Stopwatch stopwatch = new Stopwatch().start();
 		measurement.execute(neo4jDatabase);
 		stopwatch.stop();

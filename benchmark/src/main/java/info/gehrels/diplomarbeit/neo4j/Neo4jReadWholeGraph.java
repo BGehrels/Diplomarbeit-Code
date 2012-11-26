@@ -11,7 +11,7 @@ public class Neo4jReadWholeGraph {
 
 	public static void main(String... args) {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(args[0])).readWholeGraph();
+		new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(args[0])).readWholeGraph(true);
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
@@ -20,14 +20,15 @@ public class Neo4jReadWholeGraph {
 		graphDb = neo4jDatabase;
 	}
 
-	public Neo4jReadWholeGraph readWholeGraph() {
-		int numberOfResults = 0;
-
+	public Neo4jReadWholeGraph readWholeGraph(boolean writeToSystemOut) {
 		for (Relationship rel : GlobalGraphOperations.at(graphDb).getAllRelationships()) {
-			System.out.println(rel.getStartNode().getProperty(Neo4jImporter.NAME_KEY) + ", " + rel.getType() + ", " + rel.getEndNode().getProperty(Neo4jImporter.NAME_KEY));
-			numberOfResults++;
+			String output =
+				rel.getStartNode().getProperty(Neo4jImporter.NAME_KEY) + ", " + rel.getType() + ", " + rel.getEndNode()
+					.getProperty(Neo4jImporter.NAME_KEY);
+			if (writeToSystemOut) {
+				System.out.println(output);
+			}
 		}
-		System.out.println(numberOfResults);
 		return this;
 	}
 }
