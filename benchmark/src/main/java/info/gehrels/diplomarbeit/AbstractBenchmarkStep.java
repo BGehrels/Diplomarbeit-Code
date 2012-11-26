@@ -1,0 +1,63 @@
+package info.gehrels.diplomarbeit;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public abstract class AbstractBenchmarkStep {
+	public static final Pattern NUMBER_OF_NODES_PATTERN = Pattern.compile("geoff/(\\d+)_.*");
+	private final String algorithm;
+	private final String inputPath;
+	protected long maxNodeId;
+
+	public AbstractBenchmarkStep(String algorithm, String inputPath) {
+		this.algorithm = algorithm;
+		this.inputPath = inputPath;
+
+		this.maxNodeId = getMaxNodeIfFromInputPath(inputPath);
+	}
+
+	private long getMaxNodeIfFromInputPath(String inputPath) {
+		Matcher matcher = NUMBER_OF_NODES_PATTERN.matcher(inputPath);
+		matcher.find();
+		return Long.parseLong(matcher.group(1)) - 1;
+
+	}
+
+	public void execute() throws Exception {
+		switch (algorithm) {
+			case "import":
+				runImporter(inputPath);
+				break;
+			case "readWholeGraph":
+				readWholeGraph();
+				break;
+			case "calcSCC":
+				calcSCC();
+				break;
+			case "calcFoF":
+				calcFoF();
+				break;
+			case "calcCommonFriends":
+				calcCommonFriends();
+				break;
+			case "calcRegularPathQueries":
+				calcRegularPathQueries();
+				break;
+			default:
+				throw new UnsupportedOperationException(algorithm);
+		}
+	}
+
+
+	protected abstract void runImporter(String inputPath) throws Exception;
+
+	protected abstract void readWholeGraph();
+
+	protected abstract void calcSCC() throws Exception;
+
+	protected abstract void calcFoF() throws Exception;
+
+	protected abstract void calcCommonFriends() throws Exception;
+
+	protected abstract void calcRegularPathQueries() throws Exception;
+}

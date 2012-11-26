@@ -1,4 +1,4 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit;
 
 import java.util.Iterator;
 
@@ -9,7 +9,7 @@ public abstract class AbstractCommonFriends {
 		this.maxNodeId = maxNodeId;
 	}
 
-	protected void calculateCommonFriends() throws Exception {
+	public void calculateCommonFriends() throws Exception {
 		Iterator<Integer> id2Generator = new RandomNodeIdGenerator(maxNodeId, 1000).iterator();
 		for (Integer id1 : new RandomNodeIdGenerator(maxNodeId, 1000)) {
 			calculateCommonFriends(id1, id2Generator.next());

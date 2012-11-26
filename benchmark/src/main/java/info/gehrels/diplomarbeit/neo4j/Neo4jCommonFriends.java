@@ -1,6 +1,7 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
+import info.gehrels.diplomarbeit.AbstractCommonFriends;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
@@ -30,14 +31,14 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 
 	public static void main(String[] args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jCommonFriends(args[0], parseInt(args[1])).calculateCommonFriends();
+		new Neo4jCommonFriends(Neo4jHelper.createNeo4jDatabase(args[0]), parseInt(args[1])).calculateCommonFriends();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
 
-	public Neo4jCommonFriends(String neo4jPath, int maxNodeId) {
+	public Neo4jCommonFriends(GraphDatabaseService neo4jDatabase, long maxNodeId) {
 		super(maxNodeId);
-		this.graphDB = Neo4jHelper.createNeo4jDatabase(neo4jPath);
+		this.graphDB = neo4jDatabase;
 	}
 
 	@Override

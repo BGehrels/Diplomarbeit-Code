@@ -1,4 +1,4 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +12,6 @@ public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NOD
 	private Set<Long> alreadyVisitedNodes;
 	private long depthFirstVisitIndex;
 	private Map<Long, Long> nodeToDfbiMap;
-	private  SortedSet<String> sccs;
 
 	protected final Stack<Long> sccCandidatesStack = new Stack<>();
 	protected final DB_TYPE graphDB;
@@ -21,11 +20,10 @@ public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NOD
 		this.graphDB = graphDB;
 	}
 
-	protected void calculateStronglyConnectedComponents() throws Exception {
+	public void calculateStronglyConnectedComponents() throws Exception {
 		alreadyVisitedNodes = new HashSet<>();
 		depthFirstVisitIndex = 0;
 		nodeToDfbiMap = new HashMap<>();
-		sccs = new TreeSet<>();
 
 		for (NODE_TYPE node : getAllNodes()) {
 			Long nodeName = getNodeName(node);
@@ -33,8 +31,6 @@ public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NOD
 				calculateStronglyConnectedComponentsDepthFirst(node);
 			}
 		}
-
-		printOutSCCStrings();
 	}
 
 	private long calculateStronglyConnectedComponentsDepthFirst(NODE_TYPE node) throws Exception {
@@ -67,25 +63,19 @@ public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NOD
 
 		if (mySccRoot == nodeToDfbiMap.get(nodeName)) {
 			// Wir haben den zuerst touchierten Knoten einer SCC gefunden
-			sccs.add(createResultSCCString(nodeName));
+			System.out.println(createResultSCCString(nodeName));
 		}
 
 		return mySccRoot;
 	}
 
-	private void printOutSCCStrings() {
-		for (String scc : sccs) {
-			System.out.println(scc);
-		}
-	}
-
 	protected String createResultSCCString(long nodeName) {
 		SortedSet<Long> sortedNodeIds = new TreeSet<>();
-		Long pop;
+		Long sccNodeIdFromStack;
 		do {
-			pop = sccCandidatesStack.pop();
-			sortedNodeIds.add(pop);
-		} while (!pop.equals(nodeName));
+			sccNodeIdFromStack = sccCandidatesStack.pop();
+			sortedNodeIds.add(sccNodeIdFromStack);
+		} while (!sccNodeIdFromStack.equals(nodeName));
 
 		return "SCC: " + sortedNodeIds;
 	}

@@ -1,11 +1,9 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
-
-import java.util.Map;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.tooling.GlobalGraphOperations;
 
 public class Neo4jReadWholeGraph {
 
@@ -13,27 +11,20 @@ public class Neo4jReadWholeGraph {
 
 	public static void main(String... args) {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jReadWholeGraph(args[0]).readWholeGraph();
+		new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(args[0])).readWholeGraph();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
 
-	public Neo4jReadWholeGraph(String dbPath) {
-		graphDb = Neo4jHelper.createNeo4jDatabase(dbPath);
+	public Neo4jReadWholeGraph(GraphDatabaseService neo4jDatabase) {
+		graphDb = neo4jDatabase;
 	}
 
-	private Neo4jReadWholeGraph readWholeGraph() {
-		ExecutionEngine cypher = new ExecutionEngine(graphDb);
-		ExecutionResult result = cypher.execute("start n=node(*) \n"
-				+ "match n-[r]->m \n"
-				+ "return n.name,type(r) as typ,m.name \n"
-				+ "ORDER BY n.name,m.name,typ");
-
+	public Neo4jReadWholeGraph readWholeGraph() {
 		int numberOfResults = 0;
 
-		for (Object x : result) {
-			Map<String,Long> map = (Map<String,Long>) x;
-			System.out.println(map.get("n.name") + ", " + map.get("typ") + ", " + map.get("m.name"));
+		for (Relationship rel : GlobalGraphOperations.at(graphDb).getAllRelationships()) {
+			System.out.println(rel.getStartNode().getProperty(Neo4jImporter.NAME_KEY) + ", " + rel.getType() + ", " + rel.getEndNode().getProperty(Neo4jImporter.NAME_KEY));
 			numberOfResults++;
 		}
 		System.out.println(numberOfResults);

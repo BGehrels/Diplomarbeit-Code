@@ -1,6 +1,8 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
+import info.gehrels.diplomarbeit.AbstractStronglyConnectedComponentsCalculator;
+import info.gehrels.diplomarbeit.PrefetchingIterableIterator;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -13,13 +15,13 @@ public class Neo4jStronglyConnectedComponents
 	extends AbstractStronglyConnectedComponentsCalculator<GraphDatabaseService, Node> {
 	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jStronglyConnectedComponents(args[0]).calculateStronglyConnectedComponents();
+		new Neo4jStronglyConnectedComponents(Neo4jHelper.createNeo4jDatabase(args[0])).calculateStronglyConnectedComponents();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
 
-	public Neo4jStronglyConnectedComponents(String dbPath) {
-		super(Neo4jHelper.createNeo4jDatabase(dbPath));
+	public Neo4jStronglyConnectedComponents(GraphDatabaseService neo4jDatabase) {
+		super(neo4jDatabase);
 	}
 
 	@Override

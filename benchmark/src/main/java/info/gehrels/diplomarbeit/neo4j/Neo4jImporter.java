@@ -1,6 +1,10 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
+import info.gehrels.diplomarbeit.Edge;
+import info.gehrels.diplomarbeit.GeoffStreamParser;
+import info.gehrels.diplomarbeit.GraphElement;
+import info.gehrels.diplomarbeit.Node;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserterIndex;
@@ -65,7 +69,7 @@ public class Neo4jImporter {
 
     private void createEdge(long from, long to, String label) {
         batchInserter.createRelationship(from, to, withName(label),
-                                         MapUtil.<String, Object>genericMap("weight", label.substring(1)));
+                                         MapUtil.<String, Object>genericMap());
     }
 
 

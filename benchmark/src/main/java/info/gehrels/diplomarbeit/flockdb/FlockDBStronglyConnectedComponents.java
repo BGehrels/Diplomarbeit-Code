@@ -1,11 +1,13 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit.flockdb;
 
 import com.google.common.base.Stopwatch;
+import info.gehrels.diplomarbeit.AbstractStronglyConnectedComponentsCalculator;
+import info.gehrels.diplomarbeit.IterableIterator;
 import info.gehrels.flockDBClient.FlockDB;
 
 import java.io.IOException;
 
-import static info.gehrels.diplomarbeit.neo4j.FlockDBHelper.getAllOutgoingRelationshipsFor;
+import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.getAllOutgoingRelationshipsFor;
 
 public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<FlockDB, Long> {
 	private final long maxNodeId;

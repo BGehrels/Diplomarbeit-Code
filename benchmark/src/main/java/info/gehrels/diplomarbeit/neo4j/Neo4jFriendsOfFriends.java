@@ -2,47 +2,48 @@ package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
 import com.twitter.flockdb.thrift.FlockException;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.DynamicRelationshipType;
+import info.gehrels.diplomarbeit.AbstractFriendsOfFriends;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.traversal.Evaluators;
 import org.neo4j.kernel.Traversal;
 
 import java.io.IOException;
 
-public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
+import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NAME_KEY;
+import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NODE_INDEX_NAME;
+import static org.neo4j.graphdb.Direction.OUTGOING;
+import static org.neo4j.graphdb.DynamicRelationshipType.withName;
+import static org.neo4j.graphdb.traversal.Evaluators.toDepth;
 
-	private final GraphDatabaseService graphDb;
+public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends<GraphDatabaseService> {
 
 	public static void main(String... args) throws IOException, FlockException {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jFriendsOfFriends(args[0], Long.parseLong(args[1])).calculateFriendsOfFriends();
+		new Neo4jFriendsOfFriends(Neo4jHelper.createNeo4jDatabase(args[0]), Long.parseLong(args[1])).calculateFriendsOfFriends();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
 
-	public Neo4jFriendsOfFriends(String dbPath, long maxNodeId) {
-		super(maxNodeId);
-		graphDb = Neo4jHelper.createNeo4jDatabase(dbPath);
+	public Neo4jFriendsOfFriends(GraphDatabaseService neo4jDatabase, long maxNodeId) {
+		super(neo4jDatabase, maxNodeId);
 	}
 
 	@Override
 	protected void calculateFriendsOfFriends(long startNodeId) {
-		IndexHits<Node> nodes = graphDb.index().forNodes(Neo4jImporter.NODE_INDEX_NAME)
-			.get(Neo4jImporter.NAME_KEY, startNodeId);
+		IndexHits<Node> nodes = graphDb.index().forNodes(NODE_INDEX_NAME)
+			.get(NAME_KEY, startNodeId);
 
 		for (Node node : nodes) {
 			Iterable<Node> nodesTraverser = Traversal.traversal().breadthFirst()
-				.relationships(DynamicRelationshipType.withName("L1"), Direction.OUTGOING)
-				.relationships(DynamicRelationshipType.withName("L2"), Direction.OUTGOING)
-				.relationships(DynamicRelationshipType.withName("L3"), Direction.OUTGOING)
-				.relationships(DynamicRelationshipType.withName("L4"), Direction.OUTGOING)
-				.evaluator(Evaluators.toDepth(3)).traverse(node).nodes();
+				.relationships(withName("L1"), OUTGOING)
+				.relationships(withName("L2"), OUTGOING)
+				.relationships(withName("L3"), OUTGOING)
+				.relationships(withName("L4"), OUTGOING)
+				.evaluator(toDepth(3)).traverse(node).nodes();
 
 			for (Node traversedNode : nodesTraverser) {
-				traversedNode.getProperty(Neo4jImporter.NAME_KEY);
+				printFriendNode(startNodeId, (Long) traversedNode.getProperty(NAME_KEY));
 			}
 
 		}

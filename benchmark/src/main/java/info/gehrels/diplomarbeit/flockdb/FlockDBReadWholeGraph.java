@@ -1,7 +1,8 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit.flockdb;
 
 import com.google.common.base.Stopwatch;
 import com.twitter.flockdb.thrift.FlockException;
+import info.gehrels.diplomarbeit.Triplet;
 import info.gehrels.flockDBClient.FlockDB;
 import info.gehrels.flockDBClient.PagedNodeIdList;
 import info.gehrels.flockDBClient.SelectionQuery;
@@ -10,6 +11,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import static info.gehrels.flockDBClient.Direction.OUTGOING;
 
 public class FlockDBReadWholeGraph {
 	private FlockDB flockDB;
@@ -33,11 +36,12 @@ public class FlockDBReadWholeGraph {
 		return this;
 	}
 
+	// TODO: Statt dessen vielleicht UNION Query? oder mehrere Parallele?
 	private FlockDBReadWholeGraph readWholeGraph() throws IOException, FlockException {
 		for (long nodeId = 0; nodeId <= maxNodeId; nodeId++) {
-			SortedSet<Triplet<Long,Long,Byte>> results = new TreeSet<>();
+			SortedSet<Triplet<Long, Long, Byte>> results = new TreeSet<>();
 			for (byte graphId = 1; graphId <= 15; graphId++) {
-				readAllEdgesForNode(graphId, nodeId, results);
+				readAllEdgesForNode(graphId, nodeId);
 			}
 
 			printOutResults(results);
@@ -46,37 +50,22 @@ public class FlockDBReadWholeGraph {
 		return this;
 	}
 
-	private void printOutResults(SortedSet<Triplet<Long,Long,Byte>> results) {
+	private void printOutResults(SortedSet<Triplet<Long, Long, Byte>> results) {
 		for (Triplet result : results) {
 			System.out.println(result.elem1 + ", L" + result.elem3 + ", " + result.elem2);
 			numberOfResults++;
 		}
 	}
 
-	private void readAllEdgesForNode(byte graphId, long nodeId, SortedSet<Triplet<Long,Long,Byte>> results) throws IOException, FlockException {
+	private void readAllEdgesForNode(byte graphId, long nodeId) throws
+		IOException, FlockException {
 		List<PagedNodeIdList> result
 			= flockDB
-			.select(SelectionQuery.simpleSelection(nodeId, graphId, true))
+			.select(SelectionQuery.simpleSelection(nodeId, graphId, OUTGOING))
 			.execute();
-		for (PagedNodeIdList singleQueryResult : result) {
-			readWholeNodeIdList(graphId, nodeId, singleQueryResult, results);
+		for (long singleQueryResult : new NonPagedResultList(result.get(0))) {
+			System.out.println(nodeId + ", L" + graphId + ", " + singleQueryResult);
 		}
 	}
 
-	private void readWholeNodeIdList(byte graphId, long nodeId, PagedNodeIdList singleQueryResult,
-	                                 SortedSet<Triplet<Long,Long,Byte>> results) throws IOException,
-		FlockException {
-		boolean first = true;
-		do {
-			if (first) {
-				first = false;
-			} else {
-				singleQueryResult = singleQueryResult.getNextPage();
-			}
-
-			for (Long destNodeId : singleQueryResult) {
-				results.add(new Triplet<>(nodeId, destNodeId, graphId));
-			}
-		} while (singleQueryResult.hasNextPage());
-	}
 }

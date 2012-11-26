@@ -1,7 +1,7 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit;
 
-import info.gehrels.diplomarbeit.neo4j.GraphGenerationBatch.EdgeWriterFactory;
-import info.gehrels.diplomarbeit.neo4j.GraphGenerationBatch.NodeWriter;
+import info.gehrels.diplomarbeit.GraphGenerationBatch.EdgeWriterFactory;
+import info.gehrels.diplomarbeit.GraphGenerationBatch.NodeWriter;
 
 import java.util.Random;
 

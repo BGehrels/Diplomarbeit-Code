@@ -1,5 +1,6 @@
 package info.gehrels.diplomarbeit.neo4j;
 
+import info.gehrels.diplomarbeit.NodeNameProvider;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;

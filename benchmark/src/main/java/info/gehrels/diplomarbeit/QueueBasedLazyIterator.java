@@ -1,4 +1,4 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit;
 
 import java.util.Iterator;
 import java.util.LinkedList;

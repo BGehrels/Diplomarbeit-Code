@@ -1,4 +1,4 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit;
 
 import com.twitter.flockdb.thrift.FlockException;
 
@@ -6,14 +6,14 @@ import java.io.IOException;
 
 public abstract class AbstractRegularPathQuery<DB> {
 	protected final DB graphDB;
-	protected final int maxNodeId;
+	protected final long maxNodeId;
 
-	public AbstractRegularPathQuery(int maxNodeId, DB db) {
+	public AbstractRegularPathQuery(DB db, long maxNodeId) {
 		graphDB = db;
 		this.maxNodeId = maxNodeId;
 	}
 
-	protected void calculateRegularPaths() throws Exception {
+	public void calculateRegularPaths() throws Exception {
 		for (Integer nodeId : new RandomNodeIdGenerator(maxNodeId, 1000)) {
 			calculateRegularPaths(nodeId);
 		}

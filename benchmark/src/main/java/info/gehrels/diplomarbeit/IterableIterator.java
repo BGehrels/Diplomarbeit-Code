@@ -1,8 +1,8 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit;
 
 import java.util.Iterator;
 
-abstract class IterableIterator<T> implements Iterable<T>, Iterator<T> {
+public abstract class IterableIterator<T> implements Iterable<T>, Iterator<T> {
 	@Override
 	public abstract boolean hasNext();
 

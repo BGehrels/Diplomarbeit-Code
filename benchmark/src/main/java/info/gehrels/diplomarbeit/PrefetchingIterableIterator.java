@@ -1,6 +1,6 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit;
 
-abstract class PrefetchingIterableIterator<T> extends IterableIterator<T> {
+public abstract class PrefetchingIterableIterator<T> extends IterableIterator<T> {
 	protected T next;
 
 	@Override

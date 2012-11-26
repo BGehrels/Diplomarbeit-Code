@@ -1,4 +1,4 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit;
 
 public class Edge implements GraphElement {
     public final long from;

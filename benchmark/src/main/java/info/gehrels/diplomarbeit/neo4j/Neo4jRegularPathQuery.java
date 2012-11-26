@@ -1,5 +1,6 @@
 package info.gehrels.diplomarbeit.neo4j;
 
+import info.gehrels.diplomarbeit.AbstractRegularPathQuery;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -11,12 +12,12 @@ import static java.lang.Integer.parseInt;
 
 public class Neo4jRegularPathQuery extends AbstractRegularPathQuery<GraphDatabaseService> {
 
-	public Neo4jRegularPathQuery(String dbPath, int maxNodeId) {
-		super(maxNodeId, Neo4jHelper.createNeo4jDatabase(dbPath));
+	public Neo4jRegularPathQuery(GraphDatabaseService neo4jDatabase, long maxNodeId) {
+		super(neo4jDatabase, maxNodeId);
 	}
 
 	public static void main(String[] args) throws Exception {
-		new Neo4jRegularPathQuery(args[0], parseInt(args[1])).calculateRegularPaths();
+		new Neo4jRegularPathQuery(Neo4jHelper.createNeo4jDatabase(args[0]), parseInt(args[1])).calculateRegularPaths();
 	}
 
 	@Override

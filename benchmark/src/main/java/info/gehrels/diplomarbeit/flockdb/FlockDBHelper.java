@@ -1,4 +1,4 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit.flockdb;
 
 import com.twitter.flockdb.thrift.FlockException;
 import info.gehrels.flockDBClient.FlockDB;
@@ -6,6 +6,7 @@ import info.gehrels.flockDBClient.PagedNodeIdList;
 
 import java.io.IOException;
 
+import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
 import static info.gehrels.flockDBClient.SelectionQuery.union;
 
@@ -16,12 +17,12 @@ public class FlockDBHelper {
 			union(
 				union(
 					union(
-						simpleSelection(nodeId, 1, true),
-						simpleSelection(nodeId, 2, true)
+						simpleSelection(nodeId, 1, OUTGOING),
+						simpleSelection(nodeId, 2, OUTGOING)
 					),
-					simpleSelection(nodeId, 3, true)
+					simpleSelection(nodeId, 3, OUTGOING)
 				),
-				simpleSelection(nodeId, 4, true)
+				simpleSelection(nodeId, 4, OUTGOING)
 			)
 		).execute().get(0);
 

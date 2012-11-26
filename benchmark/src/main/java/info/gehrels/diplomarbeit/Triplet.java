@@ -1,6 +1,6 @@
-package info.gehrels.diplomarbeit.neo4j;
+package info.gehrels.diplomarbeit;
 
-class Triplet<A extends Comparable<A>, B extends Comparable<B>, C extends Comparable<C>> implements Comparable<Triplet<A,B,C>>{
+public class Triplet<A extends Comparable<A>, B extends Comparable<B>, C extends Comparable<C>> implements Comparable<Triplet<A,B,C>>{
 
 	public final A elem1;
 	public final B elem2;
