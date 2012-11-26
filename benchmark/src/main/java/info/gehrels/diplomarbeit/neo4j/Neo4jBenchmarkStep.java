@@ -30,42 +30,52 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
 
 	@Override
 	protected void calcSCC() throws Exception {
-		GraphDatabaseService neo4jDatabase = Neo4jHelper.createNeo4jDatabase(DB_FOLDER);
-		new Neo4jReadWholeGraph(neo4jDatabase).readWholeGraph();
-		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jStronglyConnectedComponents(neo4jDatabase).calculateStronglyConnectedComponents();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+		warmUpDatabaseAndMeasure(new Measurement() {
+			public void execute(GraphDatabaseService neo4jDatabase) throws Exception {
+				new Neo4jStronglyConnectedComponents(neo4jDatabase).calculateStronglyConnectedComponents();
+			}
+
+		});
 	}
 
 	@Override
 	protected void calcFoF() throws Exception {
-		GraphDatabaseService neo4jDatabase = Neo4jHelper.createNeo4jDatabase(DB_FOLDER);
-		new Neo4jReadWholeGraph(neo4jDatabase).readWholeGraph();
-		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jFriendsOfFriends(neo4jDatabase, maxNodeId).calculateFriendsOfFriends();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+		warmUpDatabaseAndMeasure(new Measurement() {
+			public void execute(GraphDatabaseService neo4jDatabase) throws Exception {
+				new Neo4jFriendsOfFriends(neo4jDatabase, maxNodeId).calculateFriendsOfFriends();
+			}
+		});
 	}
 
 	@Override
 	protected void calcCommonFriends() throws Exception {
-		GraphDatabaseService neo4jDatabase = Neo4jHelper.createNeo4jDatabase(DB_FOLDER);
-		new Neo4jReadWholeGraph(neo4jDatabase).readWholeGraph();
-		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jCommonFriends(neo4jDatabase, maxNodeId).calculateCommonFriends();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+		warmUpDatabaseAndMeasure(new Measurement() {
+			public void execute(GraphDatabaseService neo4jDatabase) throws Exception {
+				new Neo4jCommonFriends(neo4jDatabase, maxNodeId).calculateCommonFriends();
+			}
+		});
 	}
 
 	@Override
 	protected void calcRegularPathQueries() throws Exception {
+		warmUpDatabaseAndMeasure(new Measurement() {
+			public void execute(GraphDatabaseService neo4jDatabase) throws Exception {
+				new Neo4jRegularPathQuery(neo4jDatabase, maxNodeId).calculateRegularPaths();
+			}
+		});
+	}
+
+	private void warmUpDatabaseAndMeasure(Measurement measurement) throws Exception {
 		GraphDatabaseService neo4jDatabase = Neo4jHelper.createNeo4jDatabase(DB_FOLDER);
 		new Neo4jReadWholeGraph(neo4jDatabase).readWholeGraph();
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jRegularPathQuery(neo4jDatabase, maxNodeId).calculateRegularPaths();
+		measurement.execute(neo4jDatabase);
 		stopwatch.stop();
 		System.err.println(stopwatch);
+	}
+
+	interface Measurement {
+		void execute(GraphDatabaseService neo4jDatabase) throws Exception;
 	}
 
 }
