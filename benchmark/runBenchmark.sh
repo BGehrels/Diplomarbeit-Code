@@ -12,7 +12,7 @@ function runBenchmarkStep() {
 	then
 		echo "running $3 for $2 on $1"
 
-		java -Xmx1g -classpath "$JAVACP" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044 info.gehrels.diplomarbeit.RunBenchmarkStep geoff/$1 $2 $3 1> "$LOGFILENAME" 2> "$TIMEFILENAME"
+		java -Xmx1g -classpath "$JAVACP" info.gehrels.diplomarbeit.RunBenchmarkStep geoff/$1 $2 $3 1> "$LOGFILENAME" 2> "$TIMEFILENAME"
 		rebootToClearCaches
 	fi
 
@@ -35,9 +35,7 @@ function clearAllDatabaseTmpFiles() {
 		echo "Param: " $2
 		if [[ $2 == "dev" ]]
 		then
-			cd ../../Software/FlockDB/flockdb
-			./dist/flockdb/scripts/setup-env.sh
-			cd ../../../Code/benchmark/
+			./startFlockDB.sh
 		fi
 
 		rebootToClearCaches
