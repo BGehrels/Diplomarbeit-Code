@@ -46,10 +46,13 @@ public class FlockDBImporter {
 
 	private void ensureImportCompleted() throws Exception {
 		System.err.println("ensureImportCompleted");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/edges_development", "root", "");
-		while (!importCompleted(con)) {
-			System.err.println("Not completed yet, waiting for 500ms");
-			sleep(300);
+
+		try (Connection con = DriverManager
+			.getConnection("jdbc:mysql://localhost:3306/edges_development", "root", "")) {
+			while (!importCompleted(con)) {
+				System.err.println("Not completed yet, waiting for 500ms");
+				sleep(300);
+			}
 		}
 	}
 
