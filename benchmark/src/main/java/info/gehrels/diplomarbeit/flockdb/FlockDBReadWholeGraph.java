@@ -15,8 +15,6 @@ public class FlockDBReadWholeGraph {
 	private FlockDB flockDB;
 	private final long maxNodeId;
 
-	int numberOfResults = 0;
-
 	public FlockDBReadWholeGraph(FlockDB db, long maxNodeId) throws IOException {
 		this.maxNodeId = maxNodeId;
 		flockDB = db;
@@ -36,7 +34,7 @@ public class FlockDBReadWholeGraph {
 	// TODO: Statt dessen vielleicht UNION Query? oder mehrere Parallele?
 	public FlockDBReadWholeGraph readWholeGraph(boolean writeToStdOut) throws IOException, FlockException {
 		for (long nodeId = 0; nodeId <= maxNodeId; nodeId++) {
-			for (byte graphId = 1; graphId <= 15; graphId++) {
+			for (byte graphId = 1; graphId <= 4; graphId++) {
 				readAllEdgesForNode(graphId, nodeId, writeToStdOut);
 			}
 		}
