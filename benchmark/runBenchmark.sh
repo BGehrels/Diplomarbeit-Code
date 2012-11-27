@@ -29,6 +29,17 @@ function clearAllDatabaseTmpFiles() {
 	then
 		echo "clearing tmp files for $1"
 		rm -Rf neo4jDB
+		echo "DROP DATABASE edges_development" | mysql -u root
+		echo "DROP DATABASE flockdb_development" | mysql -u root
+
+		echo "Param: " $2
+		if [[ $2 == "dev" ]]
+		then
+			cd ../../Software/FlockDB/flockdb
+			./dist/flockdb/scripts/setup-env.sh
+			cd ../../../Code/benchmark/
+		fi
+
 		rebootToClearCaches
 	fi
 }
@@ -51,6 +62,7 @@ do
 		runBenchmark `basename $f` $db
 	done
 
+
 	mv $f geoffDone
-    clearAllDatabaseTmpFiles $f
+    clearAllDatabaseTmpFiles $f $1
 done;
