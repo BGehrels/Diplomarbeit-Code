@@ -28,7 +28,6 @@ public class RandomNodeIdGenerator implements Iterable<Integer> {
 
 			@Override
 			public Integer next() {
-				System.out.println(remainingNumberOfResults);
 				remainingNumberOfResults--;
 				return nodeIdPool.remove(random.nextInt(nodeIdPool.size()));
 			}
