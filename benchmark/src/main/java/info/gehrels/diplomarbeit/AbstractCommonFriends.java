@@ -17,4 +17,8 @@ public abstract class AbstractCommonFriends {
 	}
 
 	protected abstract void calculateCommonFriends(int id1, int id2) throws Exception;
+
+	protected final void printCommonFriend(long id1, long id2, long x) {
+		System.out.println(id1 + "/" + id2 + ": " + x);
+	}
 }

@@ -34,6 +34,7 @@ public class FlockDBCommonFriends extends AbstractCommonFriends {
 
 
 		for (Long nodeId : new NonPagedResultList(nodes)) {
+			printCommonFriend(id1, id2, nodeId);
 		}
 	}
 }

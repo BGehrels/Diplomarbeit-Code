@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NAME_KEY;
+import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NODE_INDEX_NAME;
 import static java.lang.Integer.parseInt;
 
 public class Neo4jCommonFriends extends AbstractCommonFriends {
@@ -43,14 +44,12 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 
 	@Override
 	protected void calculateCommonFriends(int id1, int id2) {
-		calculateCommonFriendsUsingCypher(id1, id2);
-		//calculateCommonFriendsUsingPureTraversal(id1, id2);
-		//calculateCommonFriendsUsingTwoManualTraversals(id1, id2);
+		calculateCommonFriendsUsingTwoTraversals(id1, id2);
 	}
 
-	private void calculateCommonFriendsUsingTwoManualTraversals(int id1, int id2) {
-		Node id1Node = graphDB.index().forNodes(Neo4jImporter.NODE_INDEX_NAME).get(NAME_KEY, id1).next();
-		final Node id2Node = graphDB.index().forNodes(Neo4jImporter.NODE_INDEX_NAME).get(NAME_KEY, id2)
+	private void calculateCommonFriendsUsingTwoTraversals(int id1, int id2) {
+		Node id1Node = graphDB.index().forNodes(NODE_INDEX_NAME).get(NAME_KEY, id1).next();
+		final Node id2Node = graphDB.index().forNodes(NODE_INDEX_NAME).get(NAME_KEY, id2)
 			.next();
 
 		Set<Long> id1Friends = new TreeSet<>();
@@ -64,13 +63,14 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 		}
 
 		id1Friends.retainAll(id2Friends);
-
-		System.out.println(id1Friends);
+		for (Long id1Friend : id1Friends) {
+			printCommonFriend(id1, id2, id1Friend);
+		}
 	}
 
 	private void calculateCommonFriendsUsingPureTraversal(int id1, int id2) {
-		Node id1Node = graphDB.index().forNodes(Neo4jImporter.NODE_INDEX_NAME).get(NAME_KEY, id1).next();
-		final Node id2Node = graphDB.index().forNodes(Neo4jImporter.NODE_INDEX_NAME).get(NAME_KEY, id2)
+		Node id1Node = graphDB.index().forNodes(NODE_INDEX_NAME).get(NAME_KEY, id1).next();
+		final Node id2Node = graphDB.index().forNodes(NODE_INDEX_NAME).get(NAME_KEY, id2)
 			.next();
 
 
@@ -109,21 +109,23 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 		for (Path path : pathTraversal) {
 			Iterator<Node> iterator = path.nodes().iterator();
 			iterator.next();
-			System.out.println(iterator.next().getProperty(NAME_KEY));
+
+			printCommonFriend(id1, id2, (Long) iterator.next().getProperty(NAME_KEY));
 		}
 	}
 
-	private void calculateCommonFriendsUsingCypher(int id1, int id2) {
+	private void calculateCommonFriendsUsingCypher(long id1, long id2) {
 		ExecutionEngine cypher = new ExecutionEngine(graphDB);
 		ExecutionResult result = cypher.execute("start " +
-		                                        "n=node:" + Neo4jImporter.NODE_INDEX_NAME + "(" + NAME_KEY + "=\"{id1}\"), " +
-		                                        "m=node:" + Neo4jImporter.NODE_INDEX_NAME + "(" + NAME_KEY + "=\"{id2}\") " +
+		                                        "n=node:" + NODE_INDEX_NAME + "(" + NAME_KEY + "={id1}), " +
+		                                        "m=node:" + NODE_INDEX_NAME + "(" + NAME_KEY + "={id2}) " +
 		                                        "match m-[:L1]->x<-[:L1]-n " +
 		                                        "return x.name as x ",
 		                                        MapUtil.<String, Object>genericMap("id1", id1, "id2", id2));
 
 		for (Object x : IteratorUtil.asIterable(result.columnAs("x"))) {
-			System.out.println(x);
+			printCommonFriend(id1, id2, (Long) x);
 		}
 	}
+
 }
