@@ -49,24 +49,19 @@ public class FlockDBImporter {
 
 		try (Connection con = DriverManager
 			.getConnection("jdbc:mysql://localhost:3306/edges_development", "root", "")) {
-			while (!importCompleted(con)) {
-				System.err.println("Not completed yet, waiting for 500ms");
+			for (long numOfEdges = 0; numOfEdges < numberOfImportedEdges; numOfEdges = getNumberOfImportedEdges(con)) {
+				System.err.println(numOfEdges + " edges completed yet, waiting...");
 				sleep(300);
 			}
 		}
 	}
 
-	private boolean importCompleted(Connection con) throws Exception {
-		System.err.println("importCompleted");
-
+	private long getNumberOfImportedEdges(Connection con) throws Exception {
 		try (Statement statement = con.createStatement();
 		     ResultSet resultSet = statement.executeQuery(IMPORT_COMPLETED_SQL)) {
 			resultSet.next();
-			return (resultSet.getLong(1) == numberOfImportedEdges);
-		} catch (Exception e) {
-			return false;
+			return resultSet.getLong(1);
 		}
-
 	}
 
 	public FlockDBImporter(String sourceFile) throws IOException {
