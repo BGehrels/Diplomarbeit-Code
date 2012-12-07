@@ -1,14 +1,13 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
+import info.gehrels.diplomarbeit.AbstractReadWholeGraph;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-public class Neo4jReadWholeGraph {
-
-	private GraphDatabaseService graphDb;
-	private final boolean writeToStdOut;
+public class Neo4jReadWholeGraph extends AbstractReadWholeGraph {
+	private final GraphDatabaseService graphDb;
 
 	public static void main(String... args) {
 		Stopwatch stopwatch = new Stopwatch().start();
@@ -18,11 +17,13 @@ public class Neo4jReadWholeGraph {
 	}
 
 	public Neo4jReadWholeGraph(GraphDatabaseService neo4jDatabase, boolean writeToStdOut) {
+		super(writeToStdOut);
 		graphDb = neo4jDatabase;
-		this.writeToStdOut = writeToStdOut;
+
 	}
 
-	public Neo4jReadWholeGraph readWholeGraph() {
+	@Override
+	public void readWholeGraph() {
 		for (Relationship rel : GlobalGraphOperations.at(graphDb).getAllRelationships()) {
 			write(
 				rel.getStartNode().getProperty(Neo4jImporter.NAME_KEY),
@@ -30,12 +31,6 @@ public class Neo4jReadWholeGraph {
 				rel.getEndNode().getProperty(Neo4jImporter.NAME_KEY)
 			);
 		}
-		return this;
 	}
 
-	private final void write(Object startNodeName, Object type, Object endNodeName) {
-		if (writeToStdOut) {
-			System.out.println(startNodeName + ", " + type + ", " + endNodeName);
-		}
-	}
 }

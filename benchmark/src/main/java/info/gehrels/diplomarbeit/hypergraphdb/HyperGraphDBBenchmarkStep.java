@@ -21,7 +21,7 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep {
 	@Override
 	protected void readWholeGraph() throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new HyperGraphReadWholeGraph(HGDB_PATH).readWholeGraph(true);
+		new HyperGraphReadWholeGraph(HGDB_PATH, true).readWholeGraph();
 		stopwatch.stop();
 		System.err.println(stopwatch);
 	}
