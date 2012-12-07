@@ -4,7 +4,7 @@ import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.CachingImporter;
 import info.gehrels.diplomarbeit.Node;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGPlainLink;
+import org.hypergraphdb.HGValueLink;
 import org.hypergraphdb.HyperGraph;
 
 public class HyperGraphDBImporter extends CachingImporter<HGHandle> {
@@ -24,7 +24,7 @@ public class HyperGraphDBImporter extends CachingImporter<HGHandle> {
 
 	@Override
 	protected void createEdgeBetweenCachedNodes(HGHandle from, HGHandle to, String label) throws Exception {
-		hyperGraph.add(new HGPlainLink(from, to));
+		hyperGraph.add(new HGValueLink(label, from, to));
 	}
 
 	@Override
