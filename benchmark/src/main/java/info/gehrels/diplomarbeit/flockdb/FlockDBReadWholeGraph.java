@@ -1,7 +1,7 @@
 package info.gehrels.diplomarbeit.flockdb;
 
 import com.google.common.base.Stopwatch;
-import com.twitter.flockdb.thrift.FlockException;
+import info.gehrels.diplomarbeit.AbstractReadWholeGraph;
 import info.gehrels.flockDBClient.FlockDB;
 import info.gehrels.flockDBClient.PagedNodeIdList;
 import info.gehrels.flockDBClient.SelectionQuery;
@@ -11,43 +11,44 @@ import java.util.List;
 
 import static info.gehrels.flockDBClient.Direction.OUTGOING;
 
-public class FlockDBReadWholeGraph {
+public class FlockDBReadWholeGraph extends AbstractReadWholeGraph {
 	private FlockDB flockDB;
 	private final long maxNodeId;
 
-	public FlockDBReadWholeGraph(FlockDB db, long maxNodeId) throws IOException {
-		this.maxNodeId = maxNodeId;
-		flockDB = db;
-	}
-
-	public static void main(String... args) throws IOException, FlockException {
+	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBReadWholeGraph(new FlockDB("localhost", 7915, 1000000), Long.parseLong(args[0])).readWholeGraph(true);
+		new FlockDBReadWholeGraph(new FlockDB("localhost", 7915, 1000000), Long.parseLong(args[0]), true)
+			.readWholeGraph();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
 
-	// TODO: Statt dessen vielleicht UNION Query? oder mehrere Parallele?
-	public FlockDBReadWholeGraph readWholeGraph(boolean writeToStdOut) throws IOException, FlockException {
-		for (long nodeId = 0; nodeId <= maxNodeId; nodeId++) {
-			for (byte graphId = 1; graphId <= 4; graphId++) {
-				readAllEdgesForNode(graphId, nodeId, writeToStdOut);
-			}
-		}
-		return this;
+	public FlockDBReadWholeGraph(FlockDB db, long maxNodeId, boolean writeToStdOut) throws IOException {
+		super(writeToStdOut);
+		this.flockDB = db;
+		this.maxNodeId = maxNodeId;
 	}
 
-	private void readAllEdgesForNode(byte graphId, long nodeId, boolean writeToStdOut) throws
-		IOException, FlockException {
+	// TODO: Statt dessen vielleicht UNION Query? oder mehrere Parallele?
+	public void readWholeGraph() throws Exception {
+		for (long nodeId = 0; nodeId <= maxNodeId; nodeId++) {
+			for (byte graphId = 1; graphId <= 4; graphId++) {
+				readAllEdgesForNode(graphId, nodeId);
+			}
+		}
+	}
+
+	private void readAllEdgesForNode(byte graphId, long nodeId) throws Exception {
 		List<PagedNodeIdList> result
 			= flockDB
 			.select(SelectionQuery.simpleSelection(nodeId, graphId, OUTGOING))
 			.execute();
 		for (long singleQueryResult : new NonPagedResultList(result.get(0))) {
-			String output = nodeId + ", L" + graphId + ", " + singleQueryResult;
-			if (writeToStdOut) {
-				System.out.println(output);
-			}
+			write(
+				nodeId,
+			    "L" + graphId,
+			    singleQueryResult
+			);
 		}
 	}
 

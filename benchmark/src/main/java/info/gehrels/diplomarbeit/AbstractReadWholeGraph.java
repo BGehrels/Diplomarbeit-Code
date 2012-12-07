@@ -7,7 +7,7 @@ public abstract class AbstractReadWholeGraph {
 		this.writeToStdOut = writeToStdOut;
 	}
 
-	public abstract void readWholeGraph();
+	public abstract void readWholeGraph() throws Exception;
 
 	protected final void write(Object startNodeName, Object type, Object endNodeName) {
 		if (writeToStdOut) {
