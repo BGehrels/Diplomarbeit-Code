@@ -22,7 +22,7 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
 	@Override
 	protected void readWholeGraph() throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBReadWholeGraph(FlockDBHelper.createFlockDB(), maxNodeId).readWholeGraph(true);
+		new FlockDBReadWholeGraph(FlockDBHelper.createFlockDB(), maxNodeId, true).readWholeGraph();
 		stopwatch.stop();
 		System.err.println(stopwatch);
 	}
@@ -66,7 +66,7 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
 
 	private void warmUpDatabaseAndMeasure(Measurement measurement) throws Exception {
 		FlockDB flockDB = FlockDBHelper.createFlockDB();
-		new FlockDBReadWholeGraph(flockDB, maxNodeId).readWholeGraph(false);
+		new FlockDBReadWholeGraph(flockDB, maxNodeId, false).readWholeGraph();
 		Stopwatch stopwatch = new Stopwatch().start();
 		measurement.execute(flockDB);
 		stopwatch.stop();
