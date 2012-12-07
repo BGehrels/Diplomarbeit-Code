@@ -1,8 +1,7 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
-import info.gehrels.diplomarbeit.AbstractImporter;
-import info.gehrels.diplomarbeit.Edge;
+import info.gehrels.diplomarbeit.CachingImporter;
 import info.gehrels.diplomarbeit.Node;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
@@ -11,17 +10,14 @@ import org.neo4j.unsafe.batchinsert.BatchInserterIndexProvider;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 import org.neo4j.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.neo4j.graphdb.DynamicRelationshipType.withName;
 import static org.neo4j.helpers.collection.MapUtil.genericMap;
 
-public class Neo4jImporter extends AbstractImporter {
+public class Neo4jImporter extends CachingImporter<Long> {
 	static final String NAME_KEY = "name";
 	public static final String NODE_INDEX_NAME = "nodes";
-
-	private final Map<Long, Long> nodeCache = new HashMap<>(200000);
 	private final BatchInserter batchInserter;
 	private final BatchInserterIndex nodeIndex;
 	private final BatchInserterIndexProvider indexProvider;
@@ -43,22 +39,20 @@ public class Neo4jImporter extends AbstractImporter {
 	}
 
 	@Override
-	protected void createEdge(Edge edge) throws Exception {
-		long from = nodeCache.get(edge.from);
-		long to = nodeCache.get(edge.to);
-		batchInserter.createRelationship(from, to, withName(edge.label),
+	protected void createEdgeBetweenCachedNodes(Long from, Long to, String label) throws Exception {
+		batchInserter.createRelationship(from, to, withName(label),
 		                                 MapUtil.<String, Object>genericMap());
 	}
 
 
 	@Override
-	public void createNode(Node node) {
+	public Long createNodeForCache(Node node) {
 		Map<String, Object> properties = genericMap(NAME_KEY, node.id);
 
 		long newNode = batchInserter.createNode(properties);
 
 		nodeIndex.add(newNode, MapUtil.<String, Object>genericMap(NAME_KEY, node.id));
-		nodeCache.put(node.id, newNode);
+		return newNode;
 	}
 
 	public void shutdown() {
