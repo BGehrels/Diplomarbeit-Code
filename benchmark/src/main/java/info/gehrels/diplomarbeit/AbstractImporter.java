@@ -9,7 +9,7 @@ public abstract class AbstractImporter {
 		this.inputStream = new FileInputStream(sourceFile);
 	}
 
-	public final AbstractImporter importNow() throws Exception {
+	public final void importNow() throws Exception {
 		for (GraphElement elem : new GeoffStreamParser(inputStream)) {
 			if (elem instanceof Edge) {
 				createEdge((Edge) elem);
@@ -17,13 +17,9 @@ public abstract class AbstractImporter {
 				createNode((Node) elem);
 			}
 		}
-
-		return this;
 	}
 
 	protected abstract void createEdge(Edge edge) throws Exception;
 
 	protected abstract void createNode(Node elem);
-
-	public abstract void shutdown() throws Exception;
 }

@@ -7,19 +7,21 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGValueLink;
 import org.hypergraphdb.HyperGraph;
 
+import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
+
 public class HyperGraphDBImporter extends CachingImporter<HGHandle> {
 	private final HyperGraph hyperGraph;
 
 	public static void main(String[] args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new HyperGraphDBImporter(args[0], args[1]).importNow().shutdown();
+		new HyperGraphDBImporter(args[0], args[1]).importNow();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
 
-	public HyperGraphDBImporter(String sourceFile, String hgdbPath) throws Exception {
+	public HyperGraphDBImporter(String sourceFile, String dbPath) throws Exception {
 		super(sourceFile);
-		hyperGraph = new HyperGraph(hgdbPath);
+		hyperGraph = createHyperGraphDB(dbPath);
 	}
 
 	@Override
@@ -30,9 +32,5 @@ public class HyperGraphDBImporter extends CachingImporter<HGHandle> {
 	@Override
 	protected HGHandle createNodeForCache(Node node) {
 		return hyperGraph.add(node.id);
-	}
-
-	public void shutdown() {
-		hyperGraph.close();
 	}
 }

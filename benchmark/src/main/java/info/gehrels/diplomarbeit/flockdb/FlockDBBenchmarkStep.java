@@ -12,7 +12,9 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
 	@Override
 	protected void runImporter(String inputPath) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBImporter(inputPath).importNow().shutdown();
+		FlockDBImporter flockDBImporter = new FlockDBImporter(inputPath);
+		flockDBImporter.importNow();
+		flockDBImporter.ensureImportCompleted();
 		stopwatch.stop();
 		System.err.println(stopwatch);
 	}

@@ -22,13 +22,9 @@ public class FlockDBReadWholeGraph {
 
 	public static void main(String... args) throws IOException, FlockException {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBReadWholeGraph(new FlockDB("localhost", 7915, 1000000), Long.parseLong(args[0])).readWholeGraph(true).shutdown();
+		new FlockDBReadWholeGraph(new FlockDB("localhost", 7915, 1000000), Long.parseLong(args[0])).readWholeGraph(true);
 		stopwatch.stop();
 		System.out.println(stopwatch);
-	}
-
-	private FlockDBReadWholeGraph shutdown() {
-		return this;
 	}
 
 	// TODO: Statt dessen vielleicht UNION Query? oder mehrere Parallele?

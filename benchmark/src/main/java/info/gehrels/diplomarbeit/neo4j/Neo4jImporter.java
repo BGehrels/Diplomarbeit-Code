@@ -25,7 +25,9 @@ public class Neo4jImporter extends CachingImporter<Long> {
 
 	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jImporter(args[0], args[1]).importNow().shutdown();
+		Neo4jImporter neo4jImporter = new Neo4jImporter(args[0], args[1]);
+		neo4jImporter.importNow();
+		neo4jImporter.shutdown();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}

@@ -15,7 +15,9 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
 	@Override
 	protected void runImporter(String inputPath) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jImporter(inputPath, DB_FOLDER).importNow().shutdown();
+		Neo4jImporter neo4jImporter = new Neo4jImporter(inputPath, DB_FOLDER);
+		neo4jImporter.importNow();
+		neo4jImporter.shutdown();
 		stopwatch.stop();
 		System.err.println(stopwatch);
 	}

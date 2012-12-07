@@ -38,14 +38,14 @@ public class FlockDBImporter extends AbstractImporter {
 
 	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBImporter(args[0]).importNow().shutdown();
+		new FlockDBImporter(args[0]).importNow();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
 
 	public FlockDBImporter(String sourceFile) throws Exception {
 		super(sourceFile);
-		flockDB = new FlockDB("localhost", 7915, 1000000);
+		flockDB = FlockDBHelper.createFlockDB();
 	}
 
 	@Override
@@ -61,13 +61,7 @@ public class FlockDBImporter extends AbstractImporter {
 	protected void createNode(Node elem) {
 	}
 
-	@Override
-	public void shutdown() throws Exception {
-		ensureImportCompleted();
-		flockDB.close();
-	}
-
-	private void ensureImportCompleted() throws Exception {
+	public void ensureImportCompleted() throws Exception {
 		System.err.println("ensureImportCompleted");
 
 		try (Connection con = DriverManager
