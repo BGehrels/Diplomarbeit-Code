@@ -16,7 +16,8 @@ import static org.neo4j.graphdb.Direction.OUTGOING;
 import static org.neo4j.graphdb.DynamicRelationshipType.withName;
 import static org.neo4j.graphdb.traversal.Evaluators.toDepth;
 
-public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends<GraphDatabaseService> {
+public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
+	private final GraphDatabaseService graphDb;
 
 	public static void main(String... args) throws IOException, FlockException {
 		Stopwatch stopwatch = new Stopwatch().start();
@@ -26,7 +27,8 @@ public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends<GraphDatabas
 	}
 
 	public Neo4jFriendsOfFriends(GraphDatabaseService neo4jDatabase, long maxNodeId) {
-		super(neo4jDatabase, maxNodeId);
+		super(maxNodeId);
+		this.graphDb = neo4jDatabase;
 	}
 
 	@Override

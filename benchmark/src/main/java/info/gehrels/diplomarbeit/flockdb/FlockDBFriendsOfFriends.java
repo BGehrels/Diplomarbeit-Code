@@ -9,11 +9,14 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends<FlockDB> {
-	Set<Long> alreadyTraversed;
+public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends {
+	private final FlockDB graphDb;
+	private Set<Long> alreadyTraversed;
 
 	public FlockDBFriendsOfFriends(FlockDB flockDB, long maxNodeId) throws IOException {
-		super(flockDB, maxNodeId);
+		super(maxNodeId);
+
+		this.graphDb = flockDB;
 	}
 
 	public static void main(String... args) throws IOException, FlockException {

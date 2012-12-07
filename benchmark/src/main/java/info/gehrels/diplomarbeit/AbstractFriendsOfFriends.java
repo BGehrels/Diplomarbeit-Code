@@ -4,12 +4,10 @@ import com.twitter.flockdb.thrift.FlockException;
 
 import java.io.IOException;
 
-public abstract class AbstractFriendsOfFriends<DB_TYPE> {
-	protected final DB_TYPE graphDb;
+public abstract class AbstractFriendsOfFriends {
 	protected final long maxNodeId;
 
-	public AbstractFriendsOfFriends(DB_TYPE graphDb, long maxNodeId) {
-		this.graphDb = graphDb;
+	public AbstractFriendsOfFriends(long maxNodeId) {
 		this.maxNodeId = maxNodeId;
 	}
 
