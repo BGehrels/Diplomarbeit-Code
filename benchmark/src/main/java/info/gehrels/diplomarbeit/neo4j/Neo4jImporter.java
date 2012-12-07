@@ -1,9 +1,8 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
+import info.gehrels.diplomarbeit.AbstractImporter;
 import info.gehrels.diplomarbeit.Edge;
-import info.gehrels.diplomarbeit.GeoffStreamParser;
-import info.gehrels.diplomarbeit.GraphElement;
 import info.gehrels.diplomarbeit.Node;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
@@ -12,79 +11,58 @@ import org.neo4j.unsafe.batchinsert.BatchInserterIndexProvider;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 import org.neo4j.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.neo4j.graphdb.DynamicRelationshipType.withName;
 import static org.neo4j.helpers.collection.MapUtil.genericMap;
 
-public class Neo4jImporter {
-    static final String NAME_KEY = "name";
+public class Neo4jImporter extends AbstractImporter {
+	static final String NAME_KEY = "name";
 	public static final String NODE_INDEX_NAME = "nodes";
 
 	private final Map<Long, Long> nodeCache = new HashMap<>(200000);
-    private final BatchInserter batchInserter;
-    private FileInputStream inputStream;
-    private final BatchInserterIndex nodeIndex;
-    private final BatchInserterIndexProvider indexProvider;
+	private final BatchInserter batchInserter;
+	private final BatchInserterIndex nodeIndex;
+	private final BatchInserterIndexProvider indexProvider;
 
 
-    public static void main(String... args) {
+	public static void main(String... args) throws Exception {
+		Stopwatch stopwatch = new Stopwatch().start();
+		new Neo4jImporter(args[0], args[1]).importNow().shutdown();
+		stopwatch.stop();
+		System.out.println(stopwatch);
+	}
 
-        try {
-            Stopwatch stopwatch = new Stopwatch().start();
-            new Neo4jImporter(args[0], args[1]).importNow().shutdown();
-            stopwatch.stop();
-            System.out.println(stopwatch);
-        } catch (FileNotFoundException e) {
-            System.out.println(e);
-            System.exit(1);
-        }
-    }
+	public Neo4jImporter(String sourceFile, String graphDbFolder) throws Exception {
+		super(sourceFile);
+		batchInserter = BatchInserters.inserter(graphDbFolder);
 
-    public Neo4jImporter(String sourceFile, String graphDbFolder) throws FileNotFoundException {
-        this.inputStream = new FileInputStream(sourceFile);
-        batchInserter = BatchInserters.inserter(graphDbFolder);
+		indexProvider = new LuceneBatchInserterIndexProvider(batchInserter);
+		nodeIndex = indexProvider.nodeIndex(NODE_INDEX_NAME, MapUtil.<String, String>genericMap("type", "exact"));
+	}
 
-        indexProvider = new LuceneBatchInserterIndexProvider(batchInserter);
-        nodeIndex = indexProvider.nodeIndex(NODE_INDEX_NAME, MapUtil.<String, String>genericMap("type", "exact"));
-    }
-
-    public Neo4jImporter importNow() {
-        for (GraphElement elem : new GeoffStreamParser(inputStream)) {
-            if (elem instanceof Edge) {
-                Edge edge = (Edge) elem;
-                long from = nodeCache.get(edge.from);
-                long to = nodeCache.get(edge.to);
-                createEdge(from, to, edge.label);
-            } else {
-                createNode((Node) elem);
-            }
-        }
-
-        return this;
-    }
-
-    private void createEdge(long from, long to, String label) {
-        batchInserter.createRelationship(from, to, withName(label),
-                                         MapUtil.<String, Object>genericMap());
-    }
+	@Override
+	protected void createEdge(Edge edge) throws Exception {
+		long from = nodeCache.get(edge.from);
+		long to = nodeCache.get(edge.to);
+		batchInserter.createRelationship(from, to, withName(edge.label),
+		                                 MapUtil.<String, Object>genericMap());
+	}
 
 
-    private long createNode(Node node) {
-        Map<String, Object> properties = genericMap(NAME_KEY, node.id);
+	@Override
+	public void createNode(Node node) {
+		Map<String, Object> properties = genericMap(NAME_KEY, node.id);
 
-        long newNode = batchInserter.createNode(properties);
+		long newNode = batchInserter.createNode(properties);
 
-        nodeIndex.add(newNode, MapUtil.<String, Object>genericMap(NAME_KEY, node.id));
-        nodeCache.put(node.id, newNode);
-        return newNode;
-    }
+		nodeIndex.add(newNode, MapUtil.<String, Object>genericMap(NAME_KEY, node.id));
+		nodeCache.put(node.id, newNode);
+	}
 
-    public void shutdown() {
-        indexProvider.shutdown();
-        batchInserter.shutdown();
-    }
+	public void shutdown() {
+		indexProvider.shutdown();
+		batchInserter.shutdown();
+	}
 }

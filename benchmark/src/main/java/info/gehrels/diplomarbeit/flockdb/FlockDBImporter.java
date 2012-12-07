@@ -3,13 +3,12 @@ package info.gehrels.diplomarbeit.flockdb;
 import com.google.common.base.Stopwatch;
 import com.twitter.flockdb.thrift.FlockException;
 import com.twitter.flockdb.thrift.Priority;
+import info.gehrels.diplomarbeit.AbstractImporter;
 import info.gehrels.diplomarbeit.Edge;
-import info.gehrels.diplomarbeit.GeoffStreamParser;
-import info.gehrels.diplomarbeit.GraphElement;
+import info.gehrels.diplomarbeit.Node;
 import info.gehrels.flockDBClient.ExecutionBuilder;
 import info.gehrels.flockDBClient.FlockDB;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +19,7 @@ import java.util.Date;
 import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static java.lang.Thread.sleep;
 
-public class FlockDBImporter {
+public class FlockDBImporter extends AbstractImporter {
 	public static final String IMPORT_COMPLETED_SQL = "SELECT\n"
 	                                                  + "\tt1.cnt+\n"
 	                                                  + "\tt2.cnt+\n"
@@ -31,7 +30,7 @@ public class FlockDBImporter {
 	                                                  + "\t(SELECT COUNT(*) as cnt FROM edges_development.forward_2_0000_edges) AS t2,\n"
 	                                                  + "\t(SELECT COUNT(*) as cnt FROM edges_development.forward_3_0000_edges) AS t3,\n"
 	                                                  + "\t(SELECT COUNT(*) as cnt FROM edges_development.forward_4_0000_edges) AS t4";
-	private final FileInputStream inputStream;
+
 	private final FlockDB flockDB;
 
 	private int numberOfImportedEdges = 0;
@@ -42,6 +41,30 @@ public class FlockDBImporter {
 		new FlockDBImporter(args[0]).importNow().shutdown();
 		stopwatch.stop();
 		System.out.println(stopwatch);
+	}
+
+	public FlockDBImporter(String sourceFile) throws Exception {
+		super(sourceFile);
+		flockDB = new FlockDB("localhost", 7915, 1000000);
+	}
+
+	@Override
+	protected void createEdge(Edge edge) throws IOException, FlockException {
+		ExecutionBuilder executionBuilder = flockDB.batchExecution(Priority.High);
+		executionBuilder
+			.add(edge.from, Integer.valueOf(edge.label.substring(1)), new Date().getTime(), OUTGOING, edge.to);
+		executionBuilder.execute();
+		numberOfImportedEdges++;
+	}
+
+	@Override
+	protected void createNode(Node elem) {
+	}
+
+	@Override
+	public void shutdown() throws Exception {
+		ensureImportCompleted();
+		flockDB.close();
 	}
 
 	private void ensureImportCompleted() throws Exception {
@@ -64,34 +87,4 @@ public class FlockDBImporter {
 		}
 	}
 
-	public FlockDBImporter(String sourceFile) throws IOException {
-		this.inputStream = new FileInputStream(sourceFile);
-		flockDB = new FlockDB("localhost", 7915, 1000000);
-	}
-
-	public FlockDBImporter importNow() throws IOException, FlockException {
-		for (GraphElement elem : new GeoffStreamParser(inputStream)) {
-			if (elem instanceof Edge) {
-				Edge edge = (Edge) elem;
-				createEdge(edge.from, edge.to, edge.label);
-			} else {
-				//NodesFunction will not be stored
-			}
-		}
-
-		return this;
-	}
-
-	private void createEdge(long from, long to, String label) throws IOException, FlockException {
-		ExecutionBuilder executionBuilder = flockDB.batchExecution(Priority.High);
-		executionBuilder
-			.add(from, Integer.valueOf(label.substring(1)), new Date().getTime(), OUTGOING, to);
-		executionBuilder.execute();
-		numberOfImportedEdges++;
-	}
-
-	public void shutdown() throws Exception {
-		ensureImportCompleted();
-		flockDB.close();
-	}
 }
