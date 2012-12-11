@@ -22,7 +22,7 @@ public class HyperGraphReadWholeGraph extends AbstractReadWholeGraph {
 		Stopwatch stopwatch = new Stopwatch().start();
 		new HyperGraphReadWholeGraph(createHyperGraphDB(args[0]), true).readWholeGraph();
 		stopwatch.stop();
-		System.out.println(stopwatch);
+		System.err.println(stopwatch);
 	}
 
 	@Override
