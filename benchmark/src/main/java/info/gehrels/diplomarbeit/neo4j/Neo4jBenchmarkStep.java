@@ -5,7 +5,7 @@ import info.gehrels.diplomarbeit.AbstractBenchmarkStep;
 import info.gehrels.diplomarbeit.Measurement;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
+public class Neo4jBenchmarkStep extends AbstractBenchmarkStep<GraphDatabaseService> {
 
 	public static final String DB_FOLDER = "neo4jDB";
 
@@ -68,13 +68,11 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
 		});
 	}
 
-	private void warmUpDatabaseAndMeasure(Measurement<GraphDatabaseService> measurement) throws Exception {
+	@Override
+	protected GraphDatabaseService createAndWarmUpDatabase() throws Exception {
 		GraphDatabaseService neo4jDatabase = Neo4jHelper.createNeo4jDatabase(DB_FOLDER);
 		new Neo4jReadWholeGraph(neo4jDatabase, false).readWholeGraph();
-		Stopwatch stopwatch = new Stopwatch().start();
-		measurement.execute(neo4jDatabase);
-		stopwatch.stop();
-		System.err.println(stopwatch);
+		return neo4jDatabase;
 	}
 
 }

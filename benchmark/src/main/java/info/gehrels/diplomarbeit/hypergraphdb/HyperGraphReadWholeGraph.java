@@ -13,14 +13,14 @@ import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHy
 public class HyperGraphReadWholeGraph extends AbstractReadWholeGraph {
 	private final HyperGraph graphDB;
 
-	public HyperGraphReadWholeGraph(String dbPath, boolean writeToStdOut) throws Exception {
+	public HyperGraphReadWholeGraph(HyperGraph db, boolean writeToStdOut) throws Exception {
 		super(writeToStdOut);
-		this.graphDB = createHyperGraphDB(dbPath);
+		this.graphDB = db;
 	}
 
 	public static void main(String[] args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new HyperGraphReadWholeGraph(args[0], true).readWholeGraph();
+		new HyperGraphReadWholeGraph(createHyperGraphDB(args[0]), true).readWholeGraph();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}

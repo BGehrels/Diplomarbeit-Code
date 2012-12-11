@@ -5,7 +5,7 @@ import info.gehrels.diplomarbeit.AbstractBenchmarkStep;
 import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.flockDBClient.FlockDB;
 
-public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
+public class FlockDBBenchmarkStep extends AbstractBenchmarkStep<FlockDB> {
 	public FlockDBBenchmarkStep(String algorithm, String inputPath) {
 		super(algorithm, inputPath);
 	}
@@ -65,12 +65,10 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
 		});
 	}
 
-	private void warmUpDatabaseAndMeasure(Measurement measurement) throws Exception {
+	@Override
+	protected FlockDB createAndWarmUpDatabase() throws Exception {
 		FlockDB flockDB = FlockDBHelper.createFlockDB();
 		new FlockDBReadWholeGraph(flockDB, maxNodeId, false).readWholeGraph();
-		Stopwatch stopwatch = new Stopwatch().start();
-		measurement.execute(flockDB);
-		stopwatch.stop();
-		System.err.println(stopwatch);
+		return flockDB;
 	}
 }

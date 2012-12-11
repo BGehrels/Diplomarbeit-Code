@@ -2,8 +2,12 @@ package info.gehrels.diplomarbeit.hypergraphdb;
 
 import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractBenchmarkStep;
+import info.gehrels.diplomarbeit.Measurement;
+import org.hypergraphdb.HyperGraph;
 
-public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep {
+import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
+
+public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep<HyperGraph> {
 	private static final String HGDB_PATH = "hyperGraphDB";
 
 	public HyperGraphDBBenchmarkStep(String algorithm, String inputPath) {
@@ -21,15 +25,18 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep {
 	@Override
 	protected void readWholeGraph() throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new HyperGraphReadWholeGraph(HGDB_PATH, true).readWholeGraph();
+		new HyperGraphReadWholeGraph(createHyperGraphDB(HGDB_PATH), true).readWholeGraph();
 		stopwatch.stop();
 		System.err.println(stopwatch);
 	}
 
 	@Override
 	protected void calcSCC() throws Exception {
-		throw new UnsupportedOperationException();
-		//To change body of implemented methods use File | Settings | File Templates.
+		warmUpDatabaseAndMeasure(new Measurement<HyperGraph>() {
+			public void execute(HyperGraph hyperGraph) throws Exception {
+				new HyperGraphDBStronglyConnectedComponents(hyperGraph, maxNodeId).calculateStronglyConnectedComponents();
+			}
+		});
 	}
 
 	@Override
@@ -49,4 +56,11 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep {
 		throw new UnsupportedOperationException();
 		//To change body of implemented methods use File | Settings | File Templates.
 	}
+
+	protected HyperGraph createAndWarmUpDatabase() throws Exception {
+		HyperGraph hyperGraph = HyperGraphDBHelper.createHyperGraphDB(HGDB_PATH);
+		new HyperGraphReadWholeGraph(hyperGraph, false).readWholeGraph();
+		return hyperGraph;
+	}
+
 }
