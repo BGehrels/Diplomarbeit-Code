@@ -16,6 +16,11 @@ public class HyperGraphDBHelper {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
+				try {
+					sleep(50); // Allow the other shutdown hooks to complete first
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
 				graphDb.close();
 			}
 		});
