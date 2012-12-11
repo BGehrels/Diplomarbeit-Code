@@ -41,8 +41,11 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep<HyperGraph>
 
 	@Override
 	protected void calcFoF() throws Exception {
-		throw new UnsupportedOperationException();
-		//To change body of implemented methods use File | Settings | File Templates.
+		warmUpDatabaseAndMeasure(new Measurement<HyperGraph>() {
+			public void execute(HyperGraph hyperGraph) throws Exception {
+				new HyperGraphDBFriendsOfFriends(hyperGraph, maxNodeId).calculateFriendsOfFriends();
+			}
+		});
 	}
 
 	@Override
