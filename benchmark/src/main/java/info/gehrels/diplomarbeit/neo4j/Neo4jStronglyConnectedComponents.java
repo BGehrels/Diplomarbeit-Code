@@ -2,6 +2,7 @@ package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractStronglyConnectedComponentsCalculator;
+import info.gehrels.diplomarbeit.TransformingIteratorWrapper;
 import info.gehrels.diplomarbeit.PrefetchingIterableIterator;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -15,7 +16,8 @@ public class Neo4jStronglyConnectedComponents
 	extends AbstractStronglyConnectedComponentsCalculator<GraphDatabaseService, Node> {
 	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jStronglyConnectedComponents(Neo4jHelper.createNeo4jDatabase(args[0])).calculateStronglyConnectedComponents();
+		new Neo4jStronglyConnectedComponents(Neo4jHelper.createNeo4jDatabase(args[0]))
+			.calculateStronglyConnectedComponents();
 		stopwatch.stop();
 		System.out.println(stopwatch);
 	}
@@ -28,17 +30,18 @@ public class Neo4jStronglyConnectedComponents
 	protected Iterable<Node> getAllNodes() {
 		return new PrefetchingIterableIterator<Node>() {
 			private final Iterator<Node> iterator = GlobalGraphOperations.at(graphDB).getAllNodes().iterator();
+
 			@Override
 			protected void ensureNextIsFetched() {
-						if (next == null && iterator.hasNext()) {
-							next = iterator.next();
-						}
+				if (next == null && iterator.hasNext()) {
+					next = iterator.next();
+				}
 
-						if (next != null && next.getId() == 0) {
-							next = null;
-							ensureNextIsFetched();
-						}
-					}
+				if (next != null && next.getId() == 0) {
+					next = null;
+					ensureNextIsFetched();
+				}
+			}
 		};
 	}
 
@@ -48,25 +51,10 @@ public class Neo4jStronglyConnectedComponents
 
 	protected Iterable<Node> getOutgoingIncidentNodes(Node node) {
 		final Iterator<Relationship> relationships = node.getRelationships(Direction.OUTGOING).iterator();
-		return new Iterable<Node>() {
+		return new TransformingIteratorWrapper<Relationship, Node>(relationships) {
 			@Override
-			public Iterator<Node> iterator() {
-				return new Iterator<Node>() {
-					@Override
-					public boolean hasNext() {
-						return relationships.hasNext();
-					}
-
-					@Override
-					public Node next() {
-						return relationships.next().getEndNode();
-					}
-
-					@Override
-					public void remove() {
-						throw new UnsupportedOperationException();
-					}
-				};
+			protected Node calculateNext(Relationship next) {
+				return next.getEndNode();
 			}
 		};
 	}
