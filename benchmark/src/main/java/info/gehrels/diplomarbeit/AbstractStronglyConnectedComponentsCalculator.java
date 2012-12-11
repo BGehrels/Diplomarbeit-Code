@@ -9,18 +9,19 @@ import java.util.Stack;
 import java.util.TreeSet;
 
 public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NODE_TYPE> {
-	private Set<Long> alreadyVisitedNodes;
-	private long depthFirstVisitIndex;
-	private Map<Long, Long> nodeToDfbiMap;
-
 	protected final Stack<Long> sccCandidatesStack = new Stack<>();
 	protected final DB_TYPE graphDB;
+
+	private long depthFirstVisitIndex;
+	private Set<Long> alreadyVisitedNodes;
+
+	private Map<Long, Long> nodeToDfbiMap;
 
 	public AbstractStronglyConnectedComponentsCalculator(DB_TYPE graphDB) {
 		this.graphDB = graphDB;
 	}
 
-	public void calculateStronglyConnectedComponents() throws Exception {
+	public final void calculateStronglyConnectedComponents() throws Exception {
 		alreadyVisitedNodes = new HashSet<>();
 		depthFirstVisitIndex = 0;
 		nodeToDfbiMap = new HashMap<>();
