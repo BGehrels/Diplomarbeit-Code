@@ -2,6 +2,7 @@ package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractBenchmarkStep;
+import info.gehrels.diplomarbeit.Measurement;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
@@ -32,7 +33,7 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
 
 	@Override
 	protected void calcSCC() throws Exception {
-		warmUpDatabaseAndMeasure(new Measurement() {
+		warmUpDatabaseAndMeasure(new Measurement<GraphDatabaseService>() {
 			public void execute(GraphDatabaseService neo4jDatabase) throws Exception {
 				new Neo4jStronglyConnectedComponents(neo4jDatabase).calculateStronglyConnectedComponents();
 			}
@@ -42,7 +43,7 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
 
 	@Override
 	protected void calcFoF() throws Exception {
-		warmUpDatabaseAndMeasure(new Measurement() {
+		warmUpDatabaseAndMeasure(new Measurement<GraphDatabaseService>() {
 			public void execute(GraphDatabaseService neo4jDatabase) throws Exception {
 				new Neo4jFriendsOfFriends(neo4jDatabase, maxNodeId).calculateFriendsOfFriends();
 			}
@@ -51,7 +52,7 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
 
 	@Override
 	protected void calcCommonFriends() throws Exception {
-		warmUpDatabaseAndMeasure(new Measurement() {
+		warmUpDatabaseAndMeasure(new Measurement<GraphDatabaseService>() {
 			public void execute(GraphDatabaseService neo4jDatabase) throws Exception {
 				new Neo4jCommonFriends(neo4jDatabase, maxNodeId).calculateCommonFriends();
 			}
@@ -60,24 +61,20 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep {
 
 	@Override
 	protected void calcRegularPathQueries() throws Exception {
-		warmUpDatabaseAndMeasure(new Measurement() {
+		warmUpDatabaseAndMeasure(new Measurement<GraphDatabaseService>() {
 			public void execute(GraphDatabaseService neo4jDatabase) throws Exception {
 				new Neo4jRegularPathQuery(neo4jDatabase, maxNodeId).calculateRegularPaths();
 			}
 		});
 	}
 
-	private void warmUpDatabaseAndMeasure(Measurement measurement) throws Exception {
+	private void warmUpDatabaseAndMeasure(Measurement<GraphDatabaseService> measurement) throws Exception {
 		GraphDatabaseService neo4jDatabase = Neo4jHelper.createNeo4jDatabase(DB_FOLDER);
 		new Neo4jReadWholeGraph(neo4jDatabase, false).readWholeGraph();
 		Stopwatch stopwatch = new Stopwatch().start();
 		measurement.execute(neo4jDatabase);
 		stopwatch.stop();
 		System.err.println(stopwatch);
-	}
-
-	interface Measurement {
-		void execute(GraphDatabaseService neo4jDatabase) throws Exception;
 	}
 
 }

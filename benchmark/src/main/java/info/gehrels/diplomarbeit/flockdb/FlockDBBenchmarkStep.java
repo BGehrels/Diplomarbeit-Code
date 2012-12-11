@@ -2,6 +2,7 @@ package info.gehrels.diplomarbeit.flockdb;
 
 import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractBenchmarkStep;
+import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.flockDBClient.FlockDB;
 
 public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
@@ -29,7 +30,7 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
 
 	@Override
 	protected void calcSCC() throws Exception {
-		warmUpDatabaseAndMeasure(new Measurement() {
+		warmUpDatabaseAndMeasure(new Measurement<FlockDB>() {
 			public void execute(FlockDB flockDB) throws Exception {
 				new FlockDBStronglyConnectedComponents(flockDB, maxNodeId).calculateStronglyConnectedComponents();
 			}
@@ -39,7 +40,7 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
 
 	@Override
 	protected void calcFoF() throws Exception {
-		warmUpDatabaseAndMeasure(new Measurement() {
+		warmUpDatabaseAndMeasure(new Measurement<FlockDB>() {
 			public void execute(FlockDB flockDB) throws Exception {
 				new FlockDBFriendsOfFriends(flockDB, maxNodeId).calculateFriendsOfFriends();
 			}
@@ -48,7 +49,7 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
 
 	@Override
 	protected void calcCommonFriends() throws Exception {
-		warmUpDatabaseAndMeasure(new Measurement() {
+		warmUpDatabaseAndMeasure(new Measurement<FlockDB>() {
 			public void execute(FlockDB flockDB) throws Exception {
 				new FlockDBCommonFriends(flockDB, maxNodeId).calculateCommonFriends();
 			}
@@ -57,7 +58,7 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
 
 	@Override
 	protected void calcRegularPathQueries() throws Exception {
-		warmUpDatabaseAndMeasure(new Measurement() {
+		warmUpDatabaseAndMeasure(new Measurement<FlockDB>() {
 			public void execute(FlockDB flockDB) throws Exception {
 				new FlockDBRegularPathQuery(flockDB, maxNodeId).calculateRegularPaths();
 			}
@@ -71,9 +72,5 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep {
 		measurement.execute(flockDB);
 		stopwatch.stop();
 		System.err.println(stopwatch);
-	}
-
-	interface Measurement {
-		void execute(FlockDB flockDB) throws Exception;
 	}
 }
