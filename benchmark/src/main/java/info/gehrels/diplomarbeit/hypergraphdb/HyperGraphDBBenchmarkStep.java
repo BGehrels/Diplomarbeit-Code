@@ -34,7 +34,7 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep<HyperGraph>
 	protected void calcSCC() throws Exception {
 		warmUpDatabaseAndMeasure(new Measurement<HyperGraph>() {
 			public void execute(HyperGraph hyperGraph) throws Exception {
-				new HyperGraphDBStronglyConnectedComponents(hyperGraph, maxNodeId).calculateStronglyConnectedComponents();
+				new HyperGraphDBStronglyConnectedComponents(hyperGraph).calculateStronglyConnectedComponents();
 			}
 		});
 	}
