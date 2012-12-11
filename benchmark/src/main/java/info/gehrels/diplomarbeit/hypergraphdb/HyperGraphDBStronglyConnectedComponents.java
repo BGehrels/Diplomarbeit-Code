@@ -13,7 +13,7 @@ public class HyperGraphDBStronglyConnectedComponents
 	extends AbstractStronglyConnectedComponentsCalculator<HyperGraph, HGHandle> {
 	public static void main(String[] args) throws Exception {
 		new HyperGraphDBStronglyConnectedComponents(
-			HyperGraphDBHelper.createHyperGraphDB("C:/Users/Benjamin/Desktop/hypergraphdb"))
+			HyperGraphDBHelper.createHyperGraphDB(args[0]))
 			.calculateStronglyConnectedComponents();
 	}
 
