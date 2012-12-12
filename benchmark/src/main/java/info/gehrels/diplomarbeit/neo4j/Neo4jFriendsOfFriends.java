@@ -1,14 +1,11 @@
 package info.gehrels.diplomarbeit.neo4j;
 
 import com.google.common.base.Stopwatch;
-import com.twitter.flockdb.thrift.FlockException;
 import info.gehrels.diplomarbeit.AbstractFriendsOfFriends;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.kernel.Traversal;
-
-import java.io.IOException;
 
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NAME_KEY;
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NODE_INDEX_NAME;
@@ -19,11 +16,11 @@ import static org.neo4j.graphdb.traversal.Evaluators.toDepth;
 public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
 	private final GraphDatabaseService graphDb;
 
-	public static void main(String... args) throws IOException, FlockException {
+	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
 		new Neo4jFriendsOfFriends(Neo4jHelper.createNeo4jDatabase(args[0]), Long.parseLong(args[1])).calculateFriendsOfFriends();
 		stopwatch.stop();
-		System.out.println(stopwatch);
+		System.err.println(stopwatch);
 	}
 
 	public Neo4jFriendsOfFriends(GraphDatabaseService neo4jDatabase, long maxNodeId) {

@@ -11,7 +11,7 @@ public abstract class AbstractFriendsOfFriends {
 		this.maxNodeId = maxNodeId;
 	}
 
-	public void calculateFriendsOfFriends() throws FlockException, IOException {
+	public void calculateFriendsOfFriends() throws Exception {
 		for (int nodeId : new RandomNodeIdGenerator(maxNodeId, 1000)) {
 			calculateFriendsOfFriends(nodeId);
 		}

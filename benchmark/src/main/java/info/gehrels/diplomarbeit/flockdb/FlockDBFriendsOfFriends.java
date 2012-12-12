@@ -19,7 +19,7 @@ public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends {
 		this.graphDb = flockDB;
 	}
 
-	public static void main(String... args) throws IOException, FlockException {
+	public static void main(String... args) throws Exception {
 		Stopwatch stopwatch = new Stopwatch().start();
 		new FlockDBFriendsOfFriends(FlockDBHelper.createFlockDB(), Long.parseLong(args[0])).calculateFriendsOfFriends();
 		stopwatch.stop();
