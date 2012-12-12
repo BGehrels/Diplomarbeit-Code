@@ -1,9 +1,9 @@
 package info.gehrels.diplomarbeit;
 
-import com.google.common.base.Stopwatch;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static info.gehrels.diplomarbeit.Measurement.measure;
 
 public abstract class AbstractBenchmarkStep<DB_TYPE> {
 	public static final Pattern NUMBER_OF_NODES_PATTERN = Pattern.compile("geoff/(\\d+)_.*");
@@ -16,13 +16,6 @@ public abstract class AbstractBenchmarkStep<DB_TYPE> {
 		this.inputPath = inputPath;
 
 		this.maxNodeId = getMaxNodeIfFromInputPath(inputPath);
-	}
-
-	protected static <T> void measure(Measurement<T> measurement, T hyperGraph) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		measurement.execute(hyperGraph);
-		stopwatch.stop();
-		System.err.println(stopwatch);
 	}
 
 	protected final void warmUpDatabaseAndMeasure(Measurement<DB_TYPE> measurement) throws Exception {

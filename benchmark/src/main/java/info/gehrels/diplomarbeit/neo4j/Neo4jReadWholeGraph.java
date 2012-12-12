@@ -1,19 +1,23 @@
 package info.gehrels.diplomarbeit.neo4j;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractReadWholeGraph;
+import info.gehrels.diplomarbeit.Measurement;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.tooling.GlobalGraphOperations;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
+
 public class Neo4jReadWholeGraph extends AbstractReadWholeGraph {
 	private final GraphDatabaseService graphDb;
 
-	public static void main(String... args) {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(args[0]), true).readWholeGraph();
-		stopwatch.stop();
-		System.out.println(stopwatch);
+	public static void main(final String... args) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(args[0]), true).readWholeGraph();
+			}
+		});
 	}
 
 	public Neo4jReadWholeGraph(GraphDatabaseService neo4jDatabase, boolean writeToStdOut) {

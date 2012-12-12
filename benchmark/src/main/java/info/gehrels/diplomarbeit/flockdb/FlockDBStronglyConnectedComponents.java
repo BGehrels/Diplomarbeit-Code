@@ -1,22 +1,26 @@
 package info.gehrels.diplomarbeit.flockdb;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractStronglyConnectedComponentsCalculator;
 import info.gehrels.diplomarbeit.IterableIterator;
+import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.flockDBClient.FlockDB;
 
 import java.io.IOException;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.getAllOutgoingRelationshipsFor;
 
 public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<FlockDB, Long> {
 	private final long maxNodeId;
 
-	public static void main(String... args) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBStronglyConnectedComponents(FlockDBHelper.createFlockDB(), Long.parseLong(args[0])).calculateStronglyConnectedComponents();
-		stopwatch.stop();
-		System.out.println(stopwatch);
+	public static void main(final String... args) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new FlockDBStronglyConnectedComponents(FlockDBHelper.createFlockDB(), Long.parseLong(args[0]))
+					.calculateStronglyConnectedComponents();
+			}
+		});
 	}
 
 	public FlockDBStronglyConnectedComponents(FlockDB flockDB, long maxNodeId) throws IOException {

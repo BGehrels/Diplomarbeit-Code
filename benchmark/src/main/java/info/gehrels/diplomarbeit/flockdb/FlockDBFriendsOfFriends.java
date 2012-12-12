@@ -1,13 +1,15 @@
 package info.gehrels.diplomarbeit.flockdb;
 
-import com.google.common.base.Stopwatch;
 import com.twitter.flockdb.thrift.FlockException;
 import info.gehrels.diplomarbeit.AbstractFriendsOfFriends;
+import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.flockDBClient.FlockDB;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import static info.gehrels.diplomarbeit.Measurement.measure;
 
 public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends {
 	private final FlockDB graphDb;
@@ -19,11 +21,14 @@ public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends {
 		this.graphDb = flockDB;
 	}
 
-	public static void main(String... args) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBFriendsOfFriends(FlockDBHelper.createFlockDB(), Long.parseLong(args[0])).calculateFriendsOfFriends();
-		stopwatch.stop();
-		System.out.println(stopwatch);
+	public static void main(final String... args) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new FlockDBFriendsOfFriends(FlockDBHelper.createFlockDB(), Long.parseLong(args[0]))
+					.calculateFriendsOfFriends();
+			}
+		});
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package info.gehrels.diplomarbeit.neo4j;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractCommonFriends;
+import info.gehrels.diplomarbeit.Measurement;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NAME_KEY;
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NODE_INDEX_NAME;
 import static java.lang.Integer.parseInt;
@@ -30,11 +31,15 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 	public static final DynamicRelationshipType L1 = DynamicRelationshipType.withName("L1");
 	private GraphDatabaseService graphDB;
 
-	public static void main(String[] args) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jCommonFriends(Neo4jHelper.createNeo4jDatabase(args[0]), parseInt(args[1])).calculateCommonFriends();
-		stopwatch.stop();
-		System.out.println(stopwatch);
+	public static void main(final String[] args) throws Exception {
+		measure(new Measurement<Void>() {
+
+			@Override
+			public void execute(Void database) throws Exception {
+				new Neo4jCommonFriends(Neo4jHelper.createNeo4jDatabase(args[0]), parseInt(args[1]))
+					.calculateCommonFriends();
+			}
+		});
 	}
 
 	public Neo4jCommonFriends(GraphDatabaseService neo4jDatabase, long maxNodeId) {

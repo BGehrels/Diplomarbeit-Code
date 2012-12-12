@@ -1,10 +1,10 @@
 package info.gehrels.diplomarbeit.hypergraphdb;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractBenchmarkStep;
 import info.gehrels.diplomarbeit.Measurement;
 import org.hypergraphdb.HyperGraph;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
 
 public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep<HyperGraph> {
@@ -15,19 +15,23 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep<HyperGraph>
 	}
 
 	@Override
-	protected void runImporter(String inputPath) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new HyperGraphDBImporter(inputPath, HGDB_PATH).importNow();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+	protected void runImporter(final String inputPath) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new HyperGraphDBImporter(inputPath, HGDB_PATH).importNow();
+			}
+		});
 	}
 
 	@Override
 	protected void readWholeGraph() throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new HyperGraphReadWholeGraph(createHyperGraphDB(HGDB_PATH), true).readWholeGraph();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new HyperGraphReadWholeGraph(createHyperGraphDB(HGDB_PATH), true).readWholeGraph();
+			}
+		});
 	}
 
 	@Override

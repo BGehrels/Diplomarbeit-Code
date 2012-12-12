@@ -1,9 +1,10 @@
 package info.gehrels.diplomarbeit.flockdb;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractBenchmarkStep;
 import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.flockDBClient.FlockDB;
+
+import static info.gehrels.diplomarbeit.Measurement.measure;
 
 public class FlockDBBenchmarkStep extends AbstractBenchmarkStep<FlockDB> {
 	public FlockDBBenchmarkStep(String algorithm, String inputPath) {
@@ -11,21 +12,26 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep<FlockDB> {
 	}
 
 	@Override
-	protected void runImporter(String inputPath) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		FlockDBImporter flockDBImporter = new FlockDBImporter(inputPath);
-		flockDBImporter.importNow();
-		flockDBImporter.ensureImportCompleted();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+	protected void runImporter(final String inputPath) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				FlockDBImporter flockDBImporter = new FlockDBImporter(inputPath);
+				flockDBImporter.importNow();
+				flockDBImporter.ensureImportCompleted();
+			}
+		});
+
 	}
 
 	@Override
 	protected void readWholeGraph() throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBReadWholeGraph(FlockDBHelper.createFlockDB(), maxNodeId, true).readWholeGraph();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new FlockDBReadWholeGraph(FlockDBHelper.createFlockDB(), maxNodeId, true).readWholeGraph();
+			}
+		}, null);
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package info.gehrels.diplomarbeit.flockdb;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractReadWholeGraph;
+import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.flockDBClient.FlockDB;
 import info.gehrels.flockDBClient.PagedNodeIdList;
 import info.gehrels.flockDBClient.SelectionQuery;
@@ -9,18 +9,21 @@ import info.gehrels.flockDBClient.SelectionQuery;
 import java.io.IOException;
 import java.util.List;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.flockDBClient.Direction.OUTGOING;
 
 public class FlockDBReadWholeGraph extends AbstractReadWholeGraph {
 	private FlockDB flockDB;
 	private final long maxNodeId;
 
-	public static void main(String... args) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new FlockDBReadWholeGraph(new FlockDB("localhost", 7915, 1000000), Long.parseLong(args[0]), true)
-			.readWholeGraph();
-		stopwatch.stop();
-		System.out.println(stopwatch);
+	public static void main(final String... args) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new FlockDBReadWholeGraph(new FlockDB("localhost", 7915, 1000000), Long.parseLong(args[0]), true)
+					.readWholeGraph();
+			}
+		});
 	}
 
 	public FlockDBReadWholeGraph(FlockDB db, long maxNodeId, boolean writeToStdOut) throws IOException {

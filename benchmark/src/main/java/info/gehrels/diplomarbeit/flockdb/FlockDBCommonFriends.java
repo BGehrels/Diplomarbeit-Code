@@ -2,11 +2,13 @@ package info.gehrels.diplomarbeit.flockdb;
 
 import com.twitter.flockdb.thrift.FlockException;
 import info.gehrels.diplomarbeit.AbstractCommonFriends;
+import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.flockDBClient.FlockDB;
 import info.gehrels.flockDBClient.PagedNodeIdList;
 
 import java.io.IOException;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static info.gehrels.flockDBClient.SelectionQuery.intersect;
 import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
@@ -14,8 +16,13 @@ import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
 public class FlockDBCommonFriends extends AbstractCommonFriends {
 	private FlockDB graphDb;
 
-	public static void main(String[] args) throws Exception {
-		new FlockDBCommonFriends(FlockDBHelper.createFlockDB(), Integer.parseInt(args[0])).calculateCommonFriends();
+	public static void main(final String[] args) throws Exception {
+		measure(new Measurement<Void>(){
+			@Override
+			public void execute(Void database) throws Exception {
+				new FlockDBCommonFriends(FlockDBHelper.createFlockDB(), Integer.parseInt(args[0])).calculateCommonFriends();
+			}
+		});
 	}
 
 	public FlockDBCommonFriends(FlockDB flockDB, long maxNodeId) throws IOException {

@@ -1,22 +1,25 @@
 package info.gehrels.diplomarbeit.hypergraphdb;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.CachingImporter;
+import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.diplomarbeit.Node;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGValueLink;
 import org.hypergraphdb.HyperGraph;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
 
 public class HyperGraphDBImporter extends CachingImporter<HGHandle> {
 	private final HyperGraph hyperGraph;
 
-	public static void main(String[] args) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new HyperGraphDBImporter(args[0], args[1]).importNow();
-		stopwatch.stop();
-		System.out.println(stopwatch);
+	public static void main(final String[] args) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new HyperGraphDBImporter(args[0], args[1]).importNow();
+			}
+		});
 	}
 
 	public HyperGraphDBImporter(String sourceFile, String dbPath) throws Exception {

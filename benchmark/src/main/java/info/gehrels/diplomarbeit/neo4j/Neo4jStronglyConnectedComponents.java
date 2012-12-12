@@ -1,9 +1,9 @@
 package info.gehrels.diplomarbeit.neo4j;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractStronglyConnectedComponentsCalculator;
-import info.gehrels.diplomarbeit.TransformingIteratorWrapper;
+import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.diplomarbeit.PrefetchingIterableIterator;
+import info.gehrels.diplomarbeit.TransformingIteratorWrapper;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -12,14 +12,18 @@ import org.neo4j.tooling.GlobalGraphOperations;
 
 import java.util.Iterator;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.neo4j.Neo4jHelper.createNeo4jDatabase;
+
 public class Neo4jStronglyConnectedComponents
 	extends AbstractStronglyConnectedComponentsCalculator<GraphDatabaseService, Node> {
-	public static void main(String... args) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jStronglyConnectedComponents(Neo4jHelper.createNeo4jDatabase(args[0]))
-			.calculateStronglyConnectedComponents();
-		stopwatch.stop();
-		System.out.println(stopwatch);
+	public static void main(final String... args) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new Neo4jStronglyConnectedComponents(createNeo4jDatabase(args[0])).calculateStronglyConnectedComponents();
+			}
+		});
 	}
 
 	public Neo4jStronglyConnectedComponents(GraphDatabaseService neo4jDatabase) {

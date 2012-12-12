@@ -17,6 +17,7 @@ public class FlockDBRegularPathQuery extends AbstractRegularPathQuery<FlockDB> {
 	public static void main(String[] args) throws Exception {
 		new FlockDBRegularPathQuery(FlockDBHelper.createFlockDB(), parseInt(args[0])).calculateRegularPaths();
 	}
+
 	public FlockDBRegularPathQuery(FlockDB flockDB, long maxNodeId) throws IOException {
 		super(flockDB, maxNodeId);
 	}

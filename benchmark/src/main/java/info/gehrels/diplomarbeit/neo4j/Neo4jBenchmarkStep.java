@@ -1,9 +1,10 @@
 package info.gehrels.diplomarbeit.neo4j;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractBenchmarkStep;
 import info.gehrels.diplomarbeit.Measurement;
 import org.neo4j.graphdb.GraphDatabaseService;
+
+import static info.gehrels.diplomarbeit.Measurement.measure;
 
 public class Neo4jBenchmarkStep extends AbstractBenchmarkStep<GraphDatabaseService> {
 
@@ -14,21 +15,25 @@ public class Neo4jBenchmarkStep extends AbstractBenchmarkStep<GraphDatabaseServi
 	}
 
 	@Override
-	protected void runImporter(String inputPath) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		Neo4jImporter neo4jImporter = new Neo4jImporter(inputPath, DB_FOLDER);
-		neo4jImporter.importNow();
-		neo4jImporter.shutdown();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+	protected void runImporter(final String inputPath) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				Neo4jImporter neo4jImporter = new Neo4jImporter(inputPath, DB_FOLDER);
+				neo4jImporter.importNow();
+				neo4jImporter.shutdown();
+			}
+		});
 	}
 
 	@Override
-	protected void readWholeGraph() {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(DB_FOLDER), true).readWholeGraph();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+	protected void readWholeGraph() throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(DB_FOLDER), true).readWholeGraph();
+			}
+		}, null);
 	}
 
 	@Override

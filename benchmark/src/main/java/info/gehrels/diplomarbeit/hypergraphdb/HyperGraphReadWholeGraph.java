@@ -1,13 +1,14 @@
 package info.gehrels.diplomarbeit.hypergraphdb;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.AbstractReadWholeGraph;
+import info.gehrels.diplomarbeit.Measurement;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGValueLink;
 import org.hypergraphdb.HyperGraph;
 
 import java.util.List;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
 
 public class HyperGraphReadWholeGraph extends AbstractReadWholeGraph {
@@ -18,11 +19,13 @@ public class HyperGraphReadWholeGraph extends AbstractReadWholeGraph {
 		this.graphDB = db;
 	}
 
-	public static void main(String[] args) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		new HyperGraphReadWholeGraph(createHyperGraphDB(args[0]), true).readWholeGraph();
-		stopwatch.stop();
-		System.err.println(stopwatch);
+	public static void main(final String[] args) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				new HyperGraphReadWholeGraph(createHyperGraphDB(args[0]), true).readWholeGraph();
+			}
+		});
 	}
 
 	@Override

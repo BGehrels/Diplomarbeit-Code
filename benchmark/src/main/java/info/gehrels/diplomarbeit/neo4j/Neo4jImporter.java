@@ -1,7 +1,7 @@
 package info.gehrels.diplomarbeit.neo4j;
 
-import com.google.common.base.Stopwatch;
 import info.gehrels.diplomarbeit.CachingImporter;
+import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.diplomarbeit.Node;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
@@ -12,6 +12,7 @@ import org.neo4j.unsafe.batchinsert.LuceneBatchInserterIndexProvider;
 
 import java.util.Map;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
 import static org.neo4j.graphdb.DynamicRelationshipType.withName;
 import static org.neo4j.helpers.collection.MapUtil.genericMap;
 
@@ -23,13 +24,15 @@ public class Neo4jImporter extends CachingImporter<Long> {
 	private final BatchInserterIndexProvider indexProvider;
 
 
-	public static void main(String... args) throws Exception {
-		Stopwatch stopwatch = new Stopwatch().start();
-		Neo4jImporter neo4jImporter = new Neo4jImporter(args[0], args[1]);
-		neo4jImporter.importNow();
-		neo4jImporter.shutdown();
-		stopwatch.stop();
-		System.out.println(stopwatch);
+	public static void main(final String... args) throws Exception {
+		measure(new Measurement<Void>() {
+			@Override
+			public void execute(Void database) throws Exception {
+				Neo4jImporter neo4jImporter = new Neo4jImporter(args[0], args[1]);
+				neo4jImporter.importNow();
+				neo4jImporter.shutdown();
+			}
+		});
 	}
 
 	public Neo4jImporter(String sourceFile, String graphDbFolder) throws Exception {
