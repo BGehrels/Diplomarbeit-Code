@@ -12,7 +12,7 @@ import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NAME_KEY;
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NODE_INDEX_NAME;
 import static org.neo4j.graphdb.Direction.OUTGOING;
 import static org.neo4j.graphdb.DynamicRelationshipType.withName;
-import static org.neo4j.graphdb.traversal.Evaluators.toDepth;
+import static org.neo4j.graphdb.traversal.Evaluators.includingDepths;
 
 public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
 	private final GraphDatabaseService graphDb;
@@ -43,7 +43,7 @@ public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
 				.relationships(withName("L2"), OUTGOING)
 				.relationships(withName("L3"), OUTGOING)
 				.relationships(withName("L4"), OUTGOING)
-				.evaluator(toDepth(3)).traverse(node).nodes();
+				.evaluator(includingDepths(1,3)).traverse(node).nodes();
 
 			for (Node traversedNode : nodesTraverser) {
 				printFriendNode(startNodeId, (Long) traversedNode.getProperty(NAME_KEY));
