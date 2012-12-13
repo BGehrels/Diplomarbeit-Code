@@ -63,8 +63,11 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep<HyperGraph>
 
 	@Override
 	protected void calcRegularPathQueries() throws Exception {
-		throw new UnsupportedOperationException();
-		//To change body of implemented methods use File | Settings | File Templates.
+		warmUpDatabaseAndMeasure(new Measurement<HyperGraph>() {
+			public void execute(HyperGraph database) throws Exception {
+				new HyperGraphRegularPathQuery(database, maxNodeId).calculateRegularPaths();
+			}
+		});
 	}
 
 	protected HyperGraph createAndWarmUpDatabase() throws Exception {
