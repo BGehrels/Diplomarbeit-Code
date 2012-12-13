@@ -18,4 +18,8 @@ public abstract class AbstractRegularPathQuery {
 	}
 
 	protected abstract void calculateRegularPaths(int id1) throws FlockException, IOException;
+
+	protected void printHit(long a, long b, long c) {
+		System.out.println(a + ", " + b + ", " + c);
+	}
 }

@@ -30,14 +30,14 @@ public class Neo4jRegularPathQuery extends AbstractRegularPathQuery {
 		                                        + "MATCH a-[:L1]->b,\n"
 		                                        + "      b-[:L2]->c,\n"
 		                                        + "      c-[:L3]->a\n"
-		                                        + "RETURN a.name, b.name, c.name\n"
-		                                        + "ORDER BY a.name, b.name, c.name",
+		                                        + "RETURN a.name, b.name, c.name",
 		                                        MapUtil.<String, Object>genericMap("id", Integer.toString(id1)));
 
 
 		for (Object x : result) {
 			Map<String,Long> map = (Map<String,Long>) x;
-			System.out.println(map.get("a.name") + ", " + map.get("b.name") + ", " + map.get("c.name"));
+			printHit(map.get("a.name"), map.get("b.name"), map.get("c.name"));
 		}
 	}
+
 }
