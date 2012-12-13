@@ -13,13 +13,16 @@ import java.util.TreeSet;
 import static info.gehrels.flockDBClient.Direction.INCOMING;
 import static java.lang.Integer.parseInt;
 
-public class FlockDBRegularPathQuery extends AbstractRegularPathQuery<FlockDB> {
+public class FlockDBRegularPathQuery extends AbstractRegularPathQuery {
+	private final FlockDB graphDB;
+
 	public static void main(String[] args) throws Exception {
 		new FlockDBRegularPathQuery(FlockDBHelper.createFlockDB(), parseInt(args[0])).calculateRegularPaths();
 	}
 
 	public FlockDBRegularPathQuery(FlockDB flockDB, long maxNodeId) throws IOException {
-		super(flockDB, maxNodeId);
+		super(maxNodeId);
+		graphDB = flockDB;
 	}
 
 	@Override

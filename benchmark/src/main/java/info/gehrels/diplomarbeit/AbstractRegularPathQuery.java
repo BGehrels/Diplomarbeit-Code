@@ -4,12 +4,10 @@ import com.twitter.flockdb.thrift.FlockException;
 
 import java.io.IOException;
 
-public abstract class AbstractRegularPathQuery<DB> {
-	protected final DB graphDB;
+public abstract class AbstractRegularPathQuery {
 	protected final long maxNodeId;
 
-	public AbstractRegularPathQuery(DB db, long maxNodeId) {
-		graphDB = db;
+	public AbstractRegularPathQuery(long maxNodeId) {
 		this.maxNodeId = maxNodeId;
 	}
 

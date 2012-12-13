@@ -10,10 +10,13 @@ import java.util.Map;
 
 import static java.lang.Integer.parseInt;
 
-public class Neo4jRegularPathQuery extends AbstractRegularPathQuery<GraphDatabaseService> {
+public class Neo4jRegularPathQuery extends AbstractRegularPathQuery {
+
+	private final GraphDatabaseService graphDB;
 
 	public Neo4jRegularPathQuery(GraphDatabaseService neo4jDatabase, long maxNodeId) {
-		super(neo4jDatabase, maxNodeId);
+		super(maxNodeId);
+		graphDB = neo4jDatabase;
 	}
 
 	public static void main(String[] args) throws Exception {
