@@ -11,14 +11,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
+import static java.lang.Long.parseLong;
+
 public class HyperGraphCommonFriends extends AbstractCommonFriends {
 	private final HyperGraph database;
 
 	public static void main(final String[] args) throws Exception {
-		Measurement.measure(new Measurement<Void>() {
+		measure(new Measurement<Void>() {
 			@Override
 			public void execute(Void database) throws Exception {
-				new HyperGraphCommonFriends(HyperGraphDBHelper.createHyperGraphDB(args[0]), Long.parseLong(args[1])).calculateCommonFriends();
+				new HyperGraphCommonFriends(createHyperGraphDB(args[0]), parseLong(args[1])).calculateCommonFriends();
 			}
 		});
 	}
