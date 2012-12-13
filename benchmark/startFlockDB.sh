@@ -1,4 +1,4 @@
 #!/bin/bash
 cd ../../Software/FlockDB/flockdb
-./dist/flockdb/scripts/setup-env.sh
+DB_USERNAME="root" ./dist/flockdb/scripts/setup-env.sh
 cd ../../../Code/benchmark/
