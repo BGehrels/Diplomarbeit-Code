@@ -45,7 +45,7 @@ public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends {
 		if (currentDepth != 0) {
 			printFriendNodes(startNodeId, currentDepthNodes);
 		}
-		if (currentDepth > 3) {
+		if (currentDepth == 3) {
 			return;
 		}
 
