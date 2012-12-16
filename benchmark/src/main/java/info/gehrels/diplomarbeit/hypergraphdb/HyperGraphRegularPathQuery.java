@@ -56,6 +56,10 @@ public class HyperGraphRegularPathQuery extends AbstractRegularPathQuery {
 				}
 
 			}
+
+			bcLinks.close();
 		}
+
+		caLinks.close();
 	}
 }
