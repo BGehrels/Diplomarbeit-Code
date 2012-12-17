@@ -6,6 +6,7 @@ import info.gehrels.diplomarbeit.Node;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGValueLink;
 import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.indexing.DirectValueIndexer;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
@@ -25,6 +26,15 @@ public class HyperGraphDBImporter extends CachingImporter<HGHandle> {
 	public HyperGraphDBImporter(String sourceFile, String dbPath) throws Exception {
 		super(sourceFile);
 		hyperGraph = createHyperGraphDB(dbPath);
+		// For Nodes
+		hyperGraph.getIndexManager().register(
+			new DirectValueIndexer(hyperGraph.getTypeSystem().getTypeHandle(Long.class))
+		);
+
+		// For Edge labels
+		hyperGraph.getIndexManager().register(
+			new DirectValueIndexer(hyperGraph.getTypeSystem().getTypeHandle(String.class))
+		);
 	}
 
 	@Override
