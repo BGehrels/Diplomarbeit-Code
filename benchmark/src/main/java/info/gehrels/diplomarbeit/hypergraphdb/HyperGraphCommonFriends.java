@@ -38,7 +38,7 @@ public class HyperGraphCommonFriends extends AbstractCommonFriends {
 	public HyperGraphCommonFriends(HyperGraph database, long maxNodeId) {
 		super(maxNodeId);
 		this.database = database;
-		this.findNodeById = hg.make(HGHandle.class, database).compile(eq(var("id")));
+		this.findNodeById = HyperGraphDBHelper.createQueryForNodeById(database);
 		this.findFriendsByNode = hg.make(HGHandle.class, database)
 			.compile(
 				apply(
