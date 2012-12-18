@@ -7,7 +7,11 @@ import org.hypergraphdb.HyperGraph;
 
 import java.io.IOException;
 
+import static org.hypergraphdb.HGQuery.hg.and;
+import static org.hypergraphdb.HGQuery.hg.apply;
 import static org.hypergraphdb.HGQuery.hg.eq;
+import static org.hypergraphdb.HGQuery.hg.incidentAt;
+import static org.hypergraphdb.HGQuery.hg.targetAt;
 import static org.hypergraphdb.HGQuery.hg.var;
 
 public class HyperGraphDBHelper {
@@ -15,7 +19,23 @@ public class HyperGraphDBHelper {
 		return new HyperGraph(dbPath);
 	}
 
-	static HGQuery<HGHandle> createQueryForNodeById(HyperGraph database) {
+	static HGQuery<HGHandle> createGetNodeByIdQuery(HyperGraph database) {
 		return hg.make(HGHandle.class, database).compile(eq(var("id")));
+	}
+
+	static HGQuery<HGHandle> createGetFriendNodesQuery(HyperGraph database, String edgeLabel, boolean outgoing) {
+		return hg.make(HGHandle.class, database)
+			.compile(
+				apply(
+					targetAt(database, outgoing ? 1 : 0),
+					and(
+						eq(edgeLabel),
+						incidentAt(
+							var("node", HGHandle.class),
+							outgoing ? 0 : 1
+						)
+					)
+				)
+			);
 	}
 }

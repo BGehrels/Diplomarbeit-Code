@@ -4,7 +4,6 @@ import info.gehrels.diplomarbeit.AbstractCommonFriends;
 import info.gehrels.diplomarbeit.Measurement;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
-import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
 
@@ -14,12 +13,6 @@ import java.util.Set;
 import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
 import static java.lang.Long.parseLong;
-import static org.hypergraphdb.HGQuery.hg.and;
-import static org.hypergraphdb.HGQuery.hg.apply;
-import static org.hypergraphdb.HGQuery.hg.eq;
-import static org.hypergraphdb.HGQuery.hg.incidentAt;
-import static org.hypergraphdb.HGQuery.hg.targetAt;
-import static org.hypergraphdb.HGQuery.hg.var;
 
 public class HyperGraphCommonFriends extends AbstractCommonFriends {
 	private final HyperGraph database;
@@ -38,20 +31,8 @@ public class HyperGraphCommonFriends extends AbstractCommonFriends {
 	public HyperGraphCommonFriends(HyperGraph database, long maxNodeId) {
 		super(maxNodeId);
 		this.database = database;
-		this.findNodeById = HyperGraphDBHelper.createQueryForNodeById(database);
-		this.findFriendsByNode = hg.make(HGHandle.class, database)
-			.compile(
-				apply(
-					targetAt(database, 1),
-					and(
-						eq("L1"),
-						incidentAt(
-							var("node", HGHandle.class),
-							0
-						)
-					)
-				)
-			);
+		this.findNodeById = HyperGraphDBHelper.createGetNodeByIdQuery(database);
+		this.findFriendsByNode = HyperGraphDBHelper.createGetFriendNodesQuery(database, "L1", true);
 
 	}
 
