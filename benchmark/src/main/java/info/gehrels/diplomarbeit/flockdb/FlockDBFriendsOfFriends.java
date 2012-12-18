@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.createFlockDB;
+import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.getAllOutgoingRelationshipsFor;
+import static java.lang.Long.parseLong;
 
 public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends {
 	private final FlockDB graphDb;
@@ -25,8 +28,7 @@ public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends {
 		measure(new Measurement<Void>() {
 			@Override
 			public void execute(Void database) throws Exception {
-				new FlockDBFriendsOfFriends(FlockDBHelper.createFlockDB(), Long.parseLong(args[0]))
-					.calculateFriendsOfFriends();
+				new FlockDBFriendsOfFriends(createFlockDB(), parseLong(args[0])).calculateFriendsOfFriends();
 			}
 		});
 	}
@@ -52,7 +54,7 @@ public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends {
 		Set<Long> nextDepthLevelNodes = new HashSet<>();
 		for (Long nodeId : currentDepthNodes) {
 			alreadyTraversed.add(nodeId);
-			for (Long friend : FlockDBHelper.getAllOutgoingRelationshipsFor(graphDb, nodeId)) {
+			for (Long friend : getAllOutgoingRelationshipsFor(graphDb, nodeId)) {
 				nextDepthLevelNodes.add(friend);
 			}
 		}

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 shopt -s nullglob
-declare -a algos=(import readWholeGraph calcSCC calcFoF calcCommonFriends calcRegularPathQueries)
-declare -a dbs=(flockdb neo4j hypergraphdb)
+declare -a algos=(import calcRegularPathQueries)
+declare -a dbs=(hypergraphdb)
 
 function runBenchmarkStep() {
 	LOGFILENAME="logs/$1-$2-$3.stdout"
@@ -13,8 +13,8 @@ function runBenchmarkStep() {
 		echo "running $3 for $2 on $1"
 
 		java -Xmx1g -jar target/benchmark-1.0-jar-with-dependencies.jar geoff/$1 $2 $3 1> "$LOGFILENAME" 2> "$TIMEFILENAME"
-		RESULT = $?
-		cat $TIMEFILENAME
+		RESULT=$?
+		grep -v "Picked up JAVA_TOOL_OPTIONS" $TIMEFILENAME
 
 		if [[ $RESULT != 0 ]] ; then
 			echo "ERROR"

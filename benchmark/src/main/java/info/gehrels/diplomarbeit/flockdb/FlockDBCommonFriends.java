@@ -9,9 +9,11 @@ import info.gehrels.flockDBClient.PagedNodeIdList;
 import java.io.IOException;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.createFlockDB;
 import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static info.gehrels.flockDBClient.SelectionQuery.intersect;
 import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
+import static java.lang.Integer.parseInt;
 
 public class FlockDBCommonFriends extends AbstractCommonFriends {
 	private FlockDB graphDb;
@@ -20,7 +22,7 @@ public class FlockDBCommonFriends extends AbstractCommonFriends {
 		measure(new Measurement<Void>(){
 			@Override
 			public void execute(Void database) throws Exception {
-				new FlockDBCommonFriends(FlockDBHelper.createFlockDB(), Integer.parseInt(args[0])).calculateCommonFriends();
+				new FlockDBCommonFriends(createFlockDB(), parseInt(args[0])).calculateCommonFriends();
 			}
 		});
 	}

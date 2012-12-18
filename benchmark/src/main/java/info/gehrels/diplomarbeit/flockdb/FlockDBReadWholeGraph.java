@@ -4,13 +4,15 @@ import info.gehrels.diplomarbeit.AbstractReadWholeGraph;
 import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.flockDBClient.FlockDB;
 import info.gehrels.flockDBClient.PagedNodeIdList;
-import info.gehrels.flockDBClient.SelectionQuery;
 
 import java.io.IOException;
 import java.util.List;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.createFlockDB;
 import static info.gehrels.flockDBClient.Direction.OUTGOING;
+import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
+import static java.lang.Long.parseLong;
 
 public class FlockDBReadWholeGraph extends AbstractReadWholeGraph {
 	private FlockDB flockDB;
@@ -20,8 +22,7 @@ public class FlockDBReadWholeGraph extends AbstractReadWholeGraph {
 		measure(new Measurement<Void>() {
 			@Override
 			public void execute(Void database) throws Exception {
-				new FlockDBReadWholeGraph(new FlockDB("localhost", 7915, 1000000), Long.parseLong(args[0]), true)
-					.readWholeGraph();
+				new FlockDBReadWholeGraph(createFlockDB(), parseLong(args[0]), true).readWholeGraph();
 			}
 		});
 	}
@@ -44,7 +45,7 @@ public class FlockDBReadWholeGraph extends AbstractReadWholeGraph {
 	private void readAllEdgesForNode(byte graphId, long nodeId) throws Exception {
 		List<PagedNodeIdList> result
 			= flockDB
-			.select(SelectionQuery.simpleSelection(nodeId, graphId, OUTGOING))
+			.select(simpleSelection(nodeId, graphId, OUTGOING))
 			.execute();
 		for (long singleQueryResult : new NonPagedResultList(result.get(0))) {
 			write(

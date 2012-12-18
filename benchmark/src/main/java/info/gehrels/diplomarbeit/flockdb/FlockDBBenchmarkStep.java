@@ -5,6 +5,7 @@ import info.gehrels.diplomarbeit.Measurement;
 import info.gehrels.flockDBClient.FlockDB;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.createFlockDB;
 
 public class FlockDBBenchmarkStep extends AbstractBenchmarkStep<FlockDB> {
 	public FlockDBBenchmarkStep(String algorithm, String inputPath) {
@@ -29,7 +30,7 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep<FlockDB> {
 		measure(new Measurement<Void>() {
 			@Override
 			public void execute(Void database) throws Exception {
-				new FlockDBReadWholeGraph(FlockDBHelper.createFlockDB(), maxNodeId, true).readWholeGraph();
+				new FlockDBReadWholeGraph(createFlockDB(), maxNodeId, true).readWholeGraph();
 			}
 		}, null);
 	}
@@ -73,7 +74,7 @@ public class FlockDBBenchmarkStep extends AbstractBenchmarkStep<FlockDB> {
 
 	@Override
 	protected FlockDB createAndWarmUpDatabase() throws Exception {
-		FlockDB flockDB = FlockDBHelper.createFlockDB();
+		FlockDB flockDB = createFlockDB();
 		new FlockDBReadWholeGraph(flockDB, maxNodeId, false).readWholeGraph();
 		return flockDB;
 	}

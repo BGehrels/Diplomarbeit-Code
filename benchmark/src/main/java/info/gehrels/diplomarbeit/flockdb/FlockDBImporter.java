@@ -11,14 +11,15 @@ import info.gehrels.flockDBClient.FlockDB;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Date;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.createFlockDB;
 import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static java.lang.Thread.sleep;
+import static java.sql.DriverManager.getConnection;
 
 public class FlockDBImporter extends AbstractImporter {
 	public static final String IMPORT_COMPLETED_SQL = "SELECT\n"
@@ -48,7 +49,7 @@ public class FlockDBImporter extends AbstractImporter {
 
 	public FlockDBImporter(String sourceFile) throws Exception {
 		super(sourceFile);
-		flockDB = FlockDBHelper.createFlockDB();
+		flockDB = createFlockDB();
 	}
 
 	@Override
@@ -67,8 +68,7 @@ public class FlockDBImporter extends AbstractImporter {
 	public void ensureImportCompleted() throws Exception {
 		System.err.println("ensureImportCompleted");
 
-		try (Connection con = DriverManager
-			.getConnection("jdbc:mysql://localhost:3306/edges_development", "root", "")) {
+		try (Connection con = getConnection("jdbc:mysql://localhost:3306/edges_development", "root", "")) {
 			for (long numOfEdges = 0; numOfEdges < numberOfImportedEdges; numOfEdges = getNumberOfImportedEdges(con)) {
 				System.err.println(numOfEdges + " edges completed yet, waiting...");
 				sleep(300);

@@ -9,6 +9,7 @@ import java.io.IOException;
 import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
 import static info.gehrels.flockDBClient.SelectionQuery.union;
+import static java.lang.Runtime.getRuntime;
 
 public class FlockDBHelper {
 	static Iterable<Long> getAllOutgoingRelationshipsFor(FlockDB graphDb, long nodeId) throws IOException,
@@ -36,7 +37,7 @@ public class FlockDBHelper {
 	}
 
 	private static void registerShutdownHook(final FlockDB graphDb) {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
+		getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
 				graphDb.close();

@@ -11,4 +11,4 @@ rm -Rf hyperGraphDB
 echo "DROP DATABASE edges_development" | mysql -u root
 echo "DROP DATABASE flockdb_development" | mysql -u root
 
-./startFlockDB.sh
+#./startFlockDB.sh

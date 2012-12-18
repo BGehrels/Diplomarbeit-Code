@@ -8,7 +8,9 @@ import info.gehrels.flockDBClient.FlockDB;
 import java.io.IOException;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.createFlockDB;
 import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.getAllOutgoingRelationshipsFor;
+import static java.lang.Long.parseLong;
 
 public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<Long> {
 	protected final FlockDB graphDB;
@@ -18,7 +20,7 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 		measure(new Measurement<Void>() {
 			@Override
 			public void execute(Void database) throws Exception {
-				new FlockDBStronglyConnectedComponents(FlockDBHelper.createFlockDB(), Long.parseLong(args[0]))
+				new FlockDBStronglyConnectedComponents(createFlockDB(), parseLong(args[0]))
 					.calculateStronglyConnectedComponents();
 			}
 		});
