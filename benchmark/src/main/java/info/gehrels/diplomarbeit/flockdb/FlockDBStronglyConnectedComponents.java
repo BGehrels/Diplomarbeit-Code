@@ -10,7 +10,8 @@ import java.io.IOException;
 import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.flockdb.FlockDBHelper.getAllOutgoingRelationshipsFor;
 
-public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<FlockDB, Long> {
+public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnectedComponentsCalculator<Long> {
+	protected final FlockDB graphDB;
 	private final long maxNodeId;
 
 	public static void main(final String... args) throws Exception {
@@ -24,8 +25,7 @@ public class FlockDBStronglyConnectedComponents extends AbstractStronglyConnecte
 	}
 
 	public FlockDBStronglyConnectedComponents(FlockDB flockDB, long maxNodeId) throws IOException {
-		super(flockDB);
-
+		this.graphDB = flockDB;
 		this.maxNodeId = maxNodeId;
 	}
 

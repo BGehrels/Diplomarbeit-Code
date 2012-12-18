@@ -16,7 +16,9 @@ import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.neo4j.Neo4jHelper.createNeo4jDatabase;
 
 public class Neo4jStronglyConnectedComponents
-	extends AbstractStronglyConnectedComponentsCalculator<GraphDatabaseService, Node> {
+	extends AbstractStronglyConnectedComponentsCalculator<Node> {
+	protected final GraphDatabaseService graphDB;
+
 	public static void main(final String... args) throws Exception {
 		measure(new Measurement<Void>() {
 			@Override
@@ -27,7 +29,7 @@ public class Neo4jStronglyConnectedComponents
 	}
 
 	public Neo4jStronglyConnectedComponents(GraphDatabaseService neo4jDatabase) {
-		super(neo4jDatabase);
+		this.graphDB = neo4jDatabase;
 	}
 
 	@Override

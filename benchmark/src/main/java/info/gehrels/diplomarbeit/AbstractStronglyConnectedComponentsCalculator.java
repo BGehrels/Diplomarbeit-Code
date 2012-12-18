@@ -8,17 +8,15 @@ import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeSet;
 
-public abstract class AbstractStronglyConnectedComponentsCalculator<DB_TYPE, NODE_TYPE> {
+public abstract class AbstractStronglyConnectedComponentsCalculator<NODE_TYPE> {
 	protected final Stack<Long> sccCandidatesStack = new Stack<>();
-	protected final DB_TYPE graphDB;
 
 	private long depthFirstVisitIndex;
 	private Set<Long> alreadyVisitedNodes;
 
 	private Map<Long, Long> nodeToDfbiMap;
 
-	public AbstractStronglyConnectedComponentsCalculator(DB_TYPE graphDB) {
-		this.graphDB = graphDB;
+	public AbstractStronglyConnectedComponentsCalculator() {
 	}
 
 	public final void calculateStronglyConnectedComponents() throws Exception {
