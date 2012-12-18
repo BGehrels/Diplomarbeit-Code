@@ -11,14 +11,12 @@ import org.hypergraphdb.HyperGraph;
 
 import java.io.IOException;
 
+import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createGetFriendNodesQuery;
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
 import static java.lang.Long.parseLong;
 import static org.hypergraphdb.HGQuery.hg.and;
-import static org.hypergraphdb.HGQuery.hg.apply;
 import static org.hypergraphdb.HGQuery.hg.eq;
-import static org.hypergraphdb.HGQuery.hg.incidentAt;
 import static org.hypergraphdb.HGQuery.hg.orderedLink;
-import static org.hypergraphdb.HGQuery.hg.targetAt;
 import static org.hypergraphdb.HGQuery.hg.var;
 
 public class HyperGraphRegularPathQuery extends AbstractRegularPathQuery {
@@ -42,26 +40,8 @@ public class HyperGraphRegularPathQuery extends AbstractRegularPathQuery {
 		this.database = database;
 
 		this.aIdQuery = hg.make(HGHandle.class, database).compile(eq(var("aId")));
-		this.incomingIncidentNodesQueryL2 = hg.make(HGHandle.class, database)
-			.compile(
-				apply(
-					targetAt(database, 0),
-					and(
-						eq("L2"),
-						incidentAt(var("node", HGHandle.class), 1)
-					)
-				)
-			);
-		this.incomingIncidentNodesQueryL3 = hg.make(HGHandle.class, database)
-			.compile(
-				apply(
-					targetAt(database, 0),
-					and(
-						eq("L3"),
-						incidentAt(var("node", HGHandle.class), 1)
-					)
-				)
-			);
+		this.incomingIncidentNodesQueryL2 = createGetFriendNodesQuery(database, "L2", false);
+		this.incomingIncidentNodesQueryL3 = createGetFriendNodesQuery(database, "L3", false);
 	}
 
 	// TODO: Impliziert hg.eq("L3") hg.type(String.class)?
