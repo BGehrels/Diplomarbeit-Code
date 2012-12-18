@@ -10,19 +10,22 @@ import org.hypergraphdb.algorithms.HGTraversal;
 import org.hypergraphdb.query.AnyAtomCondition;
 import org.hypergraphdb.util.Pair;
 
+import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createGetNodeByIdQuery;
+import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
+import static java.lang.Long.parseLong;
+
 public class HyperGraphDBFriendsOfFriends extends AbstractFriendsOfFriends {
 	private final HyperGraph hyperGraph;
 	private final HGQuery<HGHandle> queryForNodeById;
 
 	public static void main(String[] args) throws Exception {
-		new HyperGraphDBFriendsOfFriends(HyperGraphDBHelper.createHyperGraphDB(args[0]), Long.parseLong(args[1]))
-			.calculateFriendsOfFriends();
+		new HyperGraphDBFriendsOfFriends(createHyperGraphDB(args[0]), parseLong(args[1])).calculateFriendsOfFriends();
 	}
 
 	public HyperGraphDBFriendsOfFriends(HyperGraph hyperGraph, long maxNodeId) {
 		super(maxNodeId);
 		this.hyperGraph = hyperGraph;
-		queryForNodeById = HyperGraphDBHelper.createQueryForNodeById(hyperGraph);
+		this.queryForNodeById = createGetNodeByIdQuery(hyperGraph);
 	}
 
 	@Override

@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createGetFriendNodesQuery;
+import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createGetNodeByIdQuery;
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
 import static java.lang.Long.parseLong;
 
@@ -31,8 +33,8 @@ public class HyperGraphCommonFriends extends AbstractCommonFriends {
 	public HyperGraphCommonFriends(HyperGraph database, long maxNodeId) {
 		super(maxNodeId);
 		this.database = database;
-		this.findNodeById = HyperGraphDBHelper.createGetNodeByIdQuery(database);
-		this.findFriendsByNode = HyperGraphDBHelper.createGetFriendNodesQuery(database, "L1", true);
+		this.findNodeById = createGetNodeByIdQuery(database);
+		this.findFriendsByNode = createGetFriendNodesQuery(database, "L1", true);
 
 	}
 

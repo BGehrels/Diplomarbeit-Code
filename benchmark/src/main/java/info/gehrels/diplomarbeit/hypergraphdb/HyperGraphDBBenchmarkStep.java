@@ -71,7 +71,7 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep<HyperGraph>
 	}
 
 	protected HyperGraph createAndWarmUpDatabase() throws Exception {
-		HyperGraph hyperGraph = HyperGraphDBHelper.createHyperGraphDB(HGDB_PATH);
+		HyperGraph hyperGraph = createHyperGraphDB(HGDB_PATH);
 		new HyperGraphReadWholeGraph(hyperGraph, false).readWholeGraph();
 		return hyperGraph;
 	}

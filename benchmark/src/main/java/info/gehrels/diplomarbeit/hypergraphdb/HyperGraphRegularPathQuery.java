@@ -5,7 +5,6 @@ import info.gehrels.diplomarbeit.AbstractRegularPathQuery;
 import info.gehrels.diplomarbeit.Measurement;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
-import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
 
@@ -16,6 +15,7 @@ import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHy
 import static java.lang.Long.parseLong;
 import static org.hypergraphdb.HGQuery.hg.and;
 import static org.hypergraphdb.HGQuery.hg.eq;
+import static org.hypergraphdb.HGQuery.hg.make;
 import static org.hypergraphdb.HGQuery.hg.orderedLink;
 import static org.hypergraphdb.HGQuery.hg.var;
 
@@ -39,13 +39,11 @@ public class HyperGraphRegularPathQuery extends AbstractRegularPathQuery {
 		super(maxNodeId);
 		this.database = database;
 
-		this.aIdQuery = hg.make(HGHandle.class, database).compile(eq(var("aId")));
+		this.aIdQuery = make(HGHandle.class, database).compile(eq(var("aId")));
 		this.incomingIncidentNodesQueryL2 = createGetFriendNodesQuery(database, "L2", false);
 		this.incomingIncidentNodesQueryL3 = createGetFriendNodesQuery(database, "L3", false);
 	}
 
-	// TODO: Impliziert hg.eq("L3") hg.type(String.class)?
-	// TODO: Kantenlabels indizieren?
 	@Override
 	protected void calculateRegularPaths(int id1) throws FlockException, IOException {
 		// START a=node:nodes(name={id})

@@ -2,7 +2,6 @@ package info.gehrels.diplomarbeit.hypergraphdb;
 
 import info.gehrels.diplomarbeit.AbstractReadWholeGraph;
 import info.gehrels.diplomarbeit.Measurement;
-import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGValueLink;
 import org.hypergraphdb.HyperGraph;
 
@@ -10,6 +9,8 @@ import java.util.List;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
+import static org.hypergraphdb.HGQuery.hg.getAll;
+import static org.hypergraphdb.HGQuery.hg.type;
 
 public class HyperGraphReadWholeGraph extends AbstractReadWholeGraph {
 	private final HyperGraph graphDB;
@@ -30,7 +31,7 @@ public class HyperGraphReadWholeGraph extends AbstractReadWholeGraph {
 
 	@Override
 	public void readWholeGraph() {
-		List<HGValueLink> all = hg.getAll(graphDB, hg.type(String.class));
+		List<HGValueLink> all = getAll(graphDB, type(String.class));
 		for (HGValueLink links : all) {
 			write(
 				graphDB.get(links.getTargetAt(0)),

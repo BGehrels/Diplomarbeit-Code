@@ -3,14 +3,17 @@ package info.gehrels.diplomarbeit.hypergraphdb;
 import info.gehrels.diplomarbeit.AbstractStronglyConnectedComponentsCalculator;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
-import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HyperGraph;
 
 import java.util.Iterator;
 
+import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
 import static org.hypergraphdb.HGQuery.hg.apply;
+import static org.hypergraphdb.HGQuery.hg.findAll;
 import static org.hypergraphdb.HGQuery.hg.incidentAt;
+import static org.hypergraphdb.HGQuery.hg.make;
 import static org.hypergraphdb.HGQuery.hg.targetAt;
+import static org.hypergraphdb.HGQuery.hg.type;
 import static org.hypergraphdb.HGQuery.hg.var;
 
 public class HyperGraphDBStronglyConnectedComponents
@@ -19,14 +22,12 @@ public class HyperGraphDBStronglyConnectedComponents
 	private final HGQuery<HGHandle> outgoingIncidentNodesQuery;
 
 	public static void main(String[] args) throws Exception {
-		new HyperGraphDBStronglyConnectedComponents(
-			HyperGraphDBHelper.createHyperGraphDB(args[0]))
-			.calculateStronglyConnectedComponents();
+		new HyperGraphDBStronglyConnectedComponents(createHyperGraphDB(args[0])).calculateStronglyConnectedComponents();
 	}
 
 	public HyperGraphDBStronglyConnectedComponents(HyperGraph hyperGraph) {
 		this.graphDB = hyperGraph;
-		this.outgoingIncidentNodesQuery = hg.make(HGHandle.class, graphDB)
+		this.outgoingIncidentNodesQuery = make(HGHandle.class, graphDB)
 			.compile(
 				apply(
 					targetAt(graphDB, 1),
@@ -39,7 +40,7 @@ public class HyperGraphDBStronglyConnectedComponents
 
 	@Override
 	protected Iterable<HGHandle> getAllNodes() {
-		return hg.findAll(graphDB, hg.type(Long.class));
+		return findAll(graphDB, type(Long.class));
 	}
 
 	@Override
