@@ -17,5 +17,11 @@ public abstract class PrefetchingIterableIterator<T> extends IterableIterator<T>
 		return nodeToReturn;
 	}
 
-	protected abstract void ensureNextIsFetched();
+	private final void ensureNextIsFetched() {
+		if (next == null) {
+			fetchNext();
+		}
+	}
+
+	protected abstract void fetchNext();
 }

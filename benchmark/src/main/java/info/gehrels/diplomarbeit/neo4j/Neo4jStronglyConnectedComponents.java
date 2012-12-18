@@ -38,14 +38,14 @@ public class Neo4jStronglyConnectedComponents
 			private final Iterator<Node> iterator = GlobalGraphOperations.at(graphDB).getAllNodes().iterator();
 
 			@Override
-			protected void ensureNextIsFetched() {
-				if (next == null && iterator.hasNext()) {
+			protected void fetchNext() {
+				if (iterator.hasNext()) {
 					next = iterator.next();
 				}
 
 				if (next != null && next.getId() == 0) {
 					next = null;
-					ensureNextIsFetched();
+					fetchNext();
 				}
 			}
 		};
