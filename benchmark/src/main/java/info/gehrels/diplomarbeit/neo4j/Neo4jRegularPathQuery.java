@@ -8,6 +8,7 @@ import org.neo4j.helpers.collection.MapUtil;
 
 import java.util.Map;
 
+import static info.gehrels.diplomarbeit.neo4j.Neo4jHelper.createNeo4jDatabase;
 import static java.lang.Integer.parseInt;
 
 public class Neo4jRegularPathQuery extends AbstractRegularPathQuery {
@@ -20,7 +21,7 @@ public class Neo4jRegularPathQuery extends AbstractRegularPathQuery {
 	}
 
 	public static void main(String[] args) throws Exception {
-		new Neo4jRegularPathQuery(Neo4jHelper.createNeo4jDatabase(args[0]), parseInt(args[1])).calculateRegularPaths();
+		new Neo4jRegularPathQuery(createNeo4jDatabase(args[0]), parseInt(args[1])).calculateRegularPaths();
 	}
 
 	@Override

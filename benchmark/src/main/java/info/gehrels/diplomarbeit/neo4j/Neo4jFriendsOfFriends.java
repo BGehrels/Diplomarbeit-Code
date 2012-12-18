@@ -5,7 +5,6 @@ import info.gehrels.diplomarbeit.Measurement;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.kernel.Traversal;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NAME_KEY;
@@ -13,6 +12,7 @@ import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NODE_INDEX_NAME;
 import static org.neo4j.graphdb.Direction.OUTGOING;
 import static org.neo4j.graphdb.DynamicRelationshipType.withName;
 import static org.neo4j.graphdb.traversal.Evaluators.includingDepths;
+import static org.neo4j.kernel.Traversal.traversal;
 
 public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
 	private final GraphDatabaseService graphDb;
@@ -38,7 +38,7 @@ public class Neo4jFriendsOfFriends extends AbstractFriendsOfFriends {
 			.get(NAME_KEY, startNodeId);
 
 		for (Node node : nodes) {
-			Iterable<Node> nodesTraverser = Traversal.traversal().breadthFirst()
+			Iterable<Node> nodesTraverser = traversal().breadthFirst()
 				.relationships(withName("L1"), OUTGOING)
 				.relationships(withName("L2"), OUTGOING)
 				.relationships(withName("L3"), OUTGOING)

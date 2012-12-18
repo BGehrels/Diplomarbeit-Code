@@ -7,6 +7,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.neo4j.Neo4jHelper.createNeo4jDatabase;
 
 public class Neo4jReadWholeGraph extends AbstractReadWholeGraph {
 	private final GraphDatabaseService graphDb;
@@ -15,7 +16,7 @@ public class Neo4jReadWholeGraph extends AbstractReadWholeGraph {
 		measure(new Measurement<Void>() {
 			@Override
 			public void execute(Void database) throws Exception {
-				new Neo4jReadWholeGraph(Neo4jHelper.createNeo4jDatabase(args[0]), true).readWholeGraph();
+				new Neo4jReadWholeGraph(createNeo4jDatabase(args[0]), true).readWholeGraph();
 			}
 		});
 	}

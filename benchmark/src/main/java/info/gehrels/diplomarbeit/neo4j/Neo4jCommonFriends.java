@@ -16,16 +16,17 @@ import org.neo4j.graphdb.traversal.Evaluation;
 import org.neo4j.graphdb.traversal.Evaluator;
 import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.helpers.collection.MapUtil;
-import org.neo4j.kernel.Traversal;
 
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
 import static info.gehrels.diplomarbeit.Measurement.measure;
+import static info.gehrels.diplomarbeit.neo4j.Neo4jHelper.createNeo4jDatabase;
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NAME_KEY;
 import static info.gehrels.diplomarbeit.neo4j.Neo4jImporter.NODE_INDEX_NAME;
 import static java.lang.Integer.parseInt;
+import static org.neo4j.kernel.Traversal.traversal;
 
 public class Neo4jCommonFriends extends AbstractCommonFriends {
 	public static final DynamicRelationshipType L1 = DynamicRelationshipType.withName("L1");
@@ -36,8 +37,7 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 
 			@Override
 			public void execute(Void database) throws Exception {
-				new Neo4jCommonFriends(Neo4jHelper.createNeo4jDatabase(args[0]), parseInt(args[1]))
-					.calculateCommonFriends();
+				new Neo4jCommonFriends(createNeo4jDatabase(args[0]), parseInt(args[1])).calculateCommonFriends();
 			}
 		});
 	}
@@ -58,12 +58,12 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 			.next();
 
 		Set<Long> id1Friends = new TreeSet<>();
-		for (Relationship rel  : id1Node.getRelationships(L1, Direction.OUTGOING)) {
+		for (Relationship rel : id1Node.getRelationships(L1, Direction.OUTGOING)) {
 			id1Friends.add((Long) rel.getEndNode().getProperty(Neo4jImporter.NAME_KEY));
 		}
 
 		Set<Long> id2Friends = new TreeSet<>();
-		for (Relationship rel  : id2Node.getRelationships(L1, Direction.OUTGOING)) {
+		for (Relationship rel : id2Node.getRelationships(L1, Direction.OUTGOING)) {
 			id2Friends.add((Long) rel.getEndNode().getProperty(Neo4jImporter.NAME_KEY));
 		}
 
@@ -80,8 +80,7 @@ public class Neo4jCommonFriends extends AbstractCommonFriends {
 
 
 		Iterable<Path> pathTraversal =
-			Traversal
-				.traversal()
+			traversal()
 				.breadthFirst()
 				.expand(new PathExpander<Object>() {
 					@Override
