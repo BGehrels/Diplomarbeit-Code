@@ -1,5 +1,7 @@
 package info.gehrels.diplomarbeit.hypergraphdb;
 
+import org.hypergraphdb.HGConfiguration;
+import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HyperGraph;
@@ -16,7 +18,10 @@ import static org.hypergraphdb.HGQuery.hg.var;
 
 public class HyperGraphDBHelper {
 	static HyperGraph createHyperGraphDB(String dbPath) throws IOException {
-		return new HyperGraph(dbPath);
+		HGConfiguration config = new HGConfiguration();
+		config.setTransactional(false);
+		config.setCancelMaintenance(true);
+		return HGEnvironment.get(dbPath, config);
 	}
 
 	static HGQuery<HGHandle> createGetNodeByIdQuery(HyperGraph database) {
