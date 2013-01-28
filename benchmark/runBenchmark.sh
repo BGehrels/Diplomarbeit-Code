@@ -26,8 +26,9 @@ function runBenchmarkStep() {
 
 }
 
-function rebootToClearCaches() {
-	echo "-------------------"
+function clearOSCaches() {
+	sudo sync
+	sudo echo 3 > /proc/sys/vm/drop_caches
 }
 
 function clearAllDatabaseTmpFiles() {
@@ -47,7 +48,10 @@ function clearAllDatabaseTmpFiles() {
 			./startFlockDB.sh
 		fi
 
-		rebootToClearCaches
+		if [[ $2 != "dev" ]]
+		then
+			clearOSCaches
+		fi
 	fi
 }
 
