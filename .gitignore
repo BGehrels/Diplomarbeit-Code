@@ -4,3 +4,11 @@
 *.jar
 *.war
 *.ear
+*.iml
+**/target/
+je.lck
+benchmark/geoff*
+benchmark/hyperGraphDB
+benchmark/logs
+hyperGraphDB/
+.idea/
