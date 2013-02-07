@@ -57,7 +57,7 @@ public class HyperGraphCommonFriends extends AbstractCommonFriends {
 		while (l1.hasNext()) {
 			friendNodesOfNode1.add(l1.next());
 		}
-
+		l1.close();
 		return friendNodesOfNode1;
 	}
 }
