@@ -3,9 +3,20 @@ package info.gehrels.diplomarbeit.neo4j;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Neo4jHelper {
 	static GraphDatabaseService createNeo4jDatabase(String dbPath) {
-		GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbPath);
+		Map<String, String> config = new HashMap<>();
+		config.put("neostore.nodestore.db.mapped_memory", "xM");
+		config.put("neostore.relationshipstore.db.mapped_memory", "xM");
+		config.put("neostore.propertystore.db.mapped_memory", "xM");
+		config.put("neostore.propertystore.db.strings.mapped_memory", "xM");
+		config.put("neostore.propertystore.db.arrays.mapped_memory", "xM");
+
+		GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(dbPath).setConfig(config)
+			.newGraphDatabase();
 		registerShutdownHook(graphDb);
 		return graphDb;
 	}
