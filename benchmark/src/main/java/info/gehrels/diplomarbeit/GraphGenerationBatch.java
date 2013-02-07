@@ -16,7 +16,7 @@ public class GraphGenerationBatch {
 			for (int j = 0; j <= maxFor(i); j++) {
 				int numberOfNodes = (int) Math.pow(2, i);
 				long numberOfEdges = (long) Math.pow(10, j);
-
+				System.out.println("----------------------------");
 				System.out.println("numberOfNodes = " + numberOfNodes);
 				System.out.println("numberOfEdges = " + numberOfEdges);
 
@@ -27,7 +27,6 @@ public class GraphGenerationBatch {
 				}
 
 				generateGraph(numberOfNodes, numberOfEdges);
-				System.out.println("----------------------------");
 			}
 		}
 	}
