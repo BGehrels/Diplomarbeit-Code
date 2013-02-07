@@ -33,8 +33,8 @@ public class GraphGenerationBatch {
 	}
 
 	private static int maxFor(int i) {
-		int numberOfNodes = (int) Math.pow(2, i);
-		int maxPossibleNumOfEdges = numberOfNodes * (numberOfNodes + 1) / 2;
+		long numberOfNodes = (long) Math.pow(2, i);
+		long maxPossibleNumOfEdges = numberOfNodes * (numberOfNodes + 1) / 2;
 		return (int) Math.floor(Math.log10(maxPossibleNumOfEdges));
 	}
 
