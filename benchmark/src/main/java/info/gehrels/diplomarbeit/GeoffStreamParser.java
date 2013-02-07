@@ -40,7 +40,8 @@ public class GeoffStreamParser extends PrefetchingIterableIterator<GraphElement>
 			} else {
 				Matcher edgeMatcher = EDGE_PATTERN.matcher(line);
 				if (!edgeMatcher.matches()) {
-					System.out.println(line);
+					System.out.println("ERROR: " + line);
+					return;
 				}
 				String id1 = edgeMatcher.group(1);
 				String label = edgeMatcher.group(2);
