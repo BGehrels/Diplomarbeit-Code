@@ -20,8 +20,8 @@ public class GraphGenerationBatch {
 				System.out.println("numberOfNodes = " + numberOfNodes);
 				System.out.println("numberOfEdges = " + numberOfEdges);
 
-				double ratio = 2d*(double)numberOfEdges/(double)numberOfNodes;
-				if (ratio < 2.5 || ratio > 403.57) {
+				double ratio = (double)numberOfEdges/(double)numberOfNodes;
+				if (ratio > 403.57) {
 					System.out.println("SKIPPED");
 					continue;
 				}
