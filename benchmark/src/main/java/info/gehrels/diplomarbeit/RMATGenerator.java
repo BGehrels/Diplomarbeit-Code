@@ -3,8 +3,9 @@ package info.gehrels.diplomarbeit;
 import info.gehrels.diplomarbeit.GraphGenerationBatch.EdgeWriterFactory;
 import info.gehrels.diplomarbeit.GraphGenerationBatch.NodeWriter;
 
-import java.util.BitSet;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class RMATGenerator implements Generator {
 	private static final Random RANDOM = new Random();
@@ -21,7 +22,7 @@ public class RMATGenerator implements Generator {
 	private final EdgeWriterFactory edgeWriterFactory;
 	private final int numberOfNodes;
 	private final long expectedNumberOfEdges;
-	final BitSet[] adjacencyMatrix;
+	final Set<String> adjacencyMatrix = new HashSet<>();
 	int actualNumberOfEdges;
 
 	public RMATGenerator(EdgeWriterFactory edgeWriterFactory, NodeWriter nodeWriter, int numberOfNodes,
@@ -29,9 +30,7 @@ public class RMATGenerator implements Generator {
 		this.edgeWriterFactory = edgeWriterFactory;
 		this.numberOfNodes = numberOfNodes;
 		this.expectedNumberOfEdges = expectedNumberOfEdges;
-		this.adjacencyMatrix = new BitSet[numberOfNodes];
 		for (int i = 0; i < numberOfNodes; i++) {
-			adjacencyMatrix[i] = new BitSet(numberOfNodes);
 			nodeWriter.createNode("" + i);
 		}
 	}
@@ -47,9 +46,9 @@ public class RMATGenerator implements Generator {
 		int fieldSize = bottomRightX - topLeftX + 1;
 
 		if (fieldSize == 1) {
-			if (!adjacencyMatrix[topLeftX].get(topLeftY)) {
+			if (!hasEdge(topLeftX, topLeftY)) {
 				actualNumberOfEdges++;
-				adjacencyMatrix[topLeftX].set(topLeftY, true);
+				markEdge(topLeftX, topLeftY);
 				edgeWriterFactory.createEdge("" + topLeftX, "" + topLeftY);
 			}
 		} else {
@@ -69,6 +68,14 @@ public class RMATGenerator implements Generator {
 					break;
 			}
 		}
+	}
+
+	private void markEdge(int topLeftX, int topLeftY) {
+		adjacencyMatrix.add(topLeftX + ";" + topLeftY);
+	}
+
+	private boolean hasEdge(int topLeftX, int topLeftY) {
+		return adjacencyMatrix.contains(topLeftX + ";" + topLeftY);
 	}
 
 	private int throwTheQuadrantDice() {
