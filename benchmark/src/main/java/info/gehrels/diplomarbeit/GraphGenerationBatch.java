@@ -12,14 +12,22 @@ public class GraphGenerationBatch {
 	private static final Random RANDOM = new Random();
 
 	public static void main(String[] args) throws IOException {
-		for (int i = 3; i < 20; i++) {
+		for (int i = 3; i < 29; i++) {
 			for (int j = 0; j <= maxFor(i); j++) {
 				int numberOfNodes = (int) Math.pow(2, i);
 				int numberOfEdges = (int) Math.pow(10, j);
 
 				System.out.println("numberOfNodes = " + numberOfNodes);
 				System.out.println("numberOfEdges = " + numberOfEdges);
+
+				double ratio = 2d*numberOfEdges/numberOfNodes;
+				if (ratio < 2.5 || ratio > 403.57) {
+					System.out.println("SKIPPED");
+					continue;
+				}
+
 				generateGraph(numberOfNodes, numberOfEdges);
+				System.out.println("----------------------------");
 			}
 		}
 	}
