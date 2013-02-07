@@ -20,13 +20,18 @@ public class GraphGenerationBatch {
 				System.out.println("numberOfNodes = " + numberOfNodes);
 				System.out.println("numberOfEdges = " + numberOfEdges);
 
-				double ratio = (double)numberOfEdges/(double)numberOfNodes;
+				double ratio = 2d * (double) numberOfEdges / (double) numberOfNodes;
 				if (ratio > 403.57) {
 					System.out.println("SKIPPED");
 					continue;
 				}
 
-				generateGraph(numberOfNodes, numberOfEdges);
+				try {
+					generateGraph(numberOfNodes, numberOfEdges);
+				} catch (OutOfMemoryError e) {
+					System.gc();
+					System.out.println(e);
+				}
 			}
 		}
 	}
@@ -52,7 +57,8 @@ public class GraphGenerationBatch {
 		FileWriter writer = new FileWriter(fileName);
 
 		EdgeWriterFactory edgeWriterFactory = new EdgeWriterFactory(writer);
-		Generator generator = new RMATGenerator(edgeWriterFactory, new NodeWriter(writer), numberOfNodes, numberOfEdges);
+		Generator generator = new RMATGenerator(edgeWriterFactory, new NodeWriter(writer), numberOfNodes,
+		                                        numberOfEdges);
 		generator.generate();
 		writer.close();
 	}
