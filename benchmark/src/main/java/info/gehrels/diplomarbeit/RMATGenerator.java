@@ -19,12 +19,12 @@ public class RMATGenerator implements Generator {
 
 	private final EdgeWriterFactory edgeWriterFactory;
 	private final int numberOfNodes;
-	private final int expectedNumberOfEdges;
+	private final long expectedNumberOfEdges;
 	final boolean[][] adjacencyMatrix;
 	int actualNumberOfEdges;
 
 	public RMATGenerator(EdgeWriterFactory edgeWriterFactory, NodeWriter nodeWriter, int numberOfNodes,
-	                     int expectedNumberOfEdges) {
+	                     long expectedNumberOfEdges) {
 		this.edgeWriterFactory = edgeWriterFactory;
 		this.numberOfNodes = numberOfNodes;
 		this.expectedNumberOfEdges = expectedNumberOfEdges;

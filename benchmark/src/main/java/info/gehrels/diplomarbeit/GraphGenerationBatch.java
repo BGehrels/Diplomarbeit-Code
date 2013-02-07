@@ -12,15 +12,15 @@ public class GraphGenerationBatch {
 	private static final Random RANDOM = new Random();
 
 	public static void main(String[] args) throws IOException {
-		for (int i = 3; i < 29; i++) {
+		for (int i = 3; i < 30; i++) {
 			for (int j = 0; j <= maxFor(i); j++) {
 				int numberOfNodes = (int) Math.pow(2, i);
-				int numberOfEdges = (int) Math.pow(10, j);
+				long numberOfEdges = (long) Math.pow(10, j);
 
 				System.out.println("numberOfNodes = " + numberOfNodes);
 				System.out.println("numberOfEdges = " + numberOfEdges);
 
-				double ratio = 2d*numberOfEdges/numberOfNodes;
+				double ratio = 2d*(double)numberOfEdges/(double)numberOfNodes;
 				if (ratio < 2.5 || ratio > 403.57) {
 					System.out.println("SKIPPED");
 					continue;
@@ -38,7 +38,7 @@ public class GraphGenerationBatch {
 		return (int) Math.floor(Math.log10(maxPossibleNumOfEdges));
 	}
 
-	private static void generateGraph(int numberOfNodes, int numberOfEdges) throws IOException {
+	private static void generateGraph(int numberOfNodes, long numberOfEdges) throws IOException {
 		String fileNameBase = numberOfNodes + "_" + numberOfEdges;
 		String geoffFileName = fileNameBase + ".geoff";
 		deleteGeofFile(geoffFileName);
@@ -49,7 +49,7 @@ public class GraphGenerationBatch {
 		new File(geoffFileName).delete();
 	}
 
-	private static void generateAGeoffFile(int numberOfNodes, int numberOfEdges, String fileName) throws IOException {
+	private static void generateAGeoffFile(int numberOfNodes, long numberOfEdges, String fileName) throws IOException {
 		FileWriter writer = new FileWriter(fileName);
 
 		EdgeWriterFactory edgeWriterFactory = new EdgeWriterFactory(writer);
