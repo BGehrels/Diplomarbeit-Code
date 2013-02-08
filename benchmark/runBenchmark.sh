@@ -1,8 +1,8 @@
 #!/bin/bash
 
 shopt -s nullglob
-declare -a algos=(import calcRegularPathQueries)
-declare -a dbs=(hypergraphdb)
+declare -a algos=(import readWholeGraph calcSCC calcFoF calcCommonFriends calcRegularPathQueries)
+declare -a dbs=(neo4j)
 
 function runBenchmarkStep() {
 	LOGFILENAME="logs/$1-$2-$3.stdout"
@@ -11,8 +11,14 @@ function runBenchmarkStep() {
 	if [[ ! -a  "$LOGFILENAME" ]]
 	then
 		echo "running $3 for $2 on $1"
+		JAVA_MEM="-Xmx29g"
+		if [[ $2 == "flockdb" ]] 
+		then
+			JAVA_MEM="-Xmx10g"
+			echo "Setting JAVA_MEM to $JAVA_MEM"
+		fi
 
-		java -Xmx1g -jar target/benchmark-1.0-jar-with-dependencies.jar geoff/$1 $2 $3 1> "$LOGFILENAME" 2> "$TIMEFILENAME"
+		java $JAVA_MEM -server -jar target/benchmark-1.0-jar-with-dependencies.jar geoff/$1 $2 $3 1> "$LOGFILENAME" 2> "$TIMEFILENAME"
 		RESULT=$?
 		grep -v "Picked up JAVA_TOOL_OPTIONS" $TIMEFILENAME
 
@@ -21,14 +27,14 @@ function runBenchmarkStep() {
 			exit
 		fi
 
-		rebootToClearCaches
+		clearOSCaches
 	fi
 
 }
 
 function clearOSCaches() {
 	sudo sync
-	sudo echo 3 > /proc/sys/vm/drop_caches
+	sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
 }
 
 function clearAllDatabaseTmpFiles() {
