@@ -30,8 +30,8 @@
 		</dependency>
 		<dependency>
 			<groupId>info.gehrels</groupId>
-			<artifactId>FlockDbClient</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<artifactId>FlockDB-Client</artifactId>
+			<version>0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
