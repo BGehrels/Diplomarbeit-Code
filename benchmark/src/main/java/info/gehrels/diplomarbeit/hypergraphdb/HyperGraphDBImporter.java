@@ -26,6 +26,7 @@ public class HyperGraphDBImporter extends CachingImporter<HGHandle> {
 	public HyperGraphDBImporter(String sourceFile, String dbPath) throws Exception {
 		super(sourceFile);
 		hyperGraph = createHyperGraphDB(dbPath);
+
 		// For Nodes
 		hyperGraph.getIndexManager().register(
 			new DirectValueIndexer(hyperGraph.getTypeSystem().getTypeHandle(Long.class))
