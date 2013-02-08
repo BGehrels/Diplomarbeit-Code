@@ -20,7 +20,7 @@ public class HyperGraphDBHelper {
 	static HyperGraph createHyperGraphDB(String dbPath) throws IOException {
 		HGConfiguration config = new HGConfiguration();
 		config.setTransactional(false);
-		config.setCancelMaintenance(true);
+		config.setUseSystemAtomAttributes(false);
 		return HGEnvironment.get(dbPath, config);
 	}
 
@@ -29,6 +29,9 @@ public class HyperGraphDBHelper {
 	}
 
 	static HGQuery<HGHandle> createGetFriendNodesQuery(HyperGraph database, String edgeLabel, boolean outgoing) {
+		// TODO: Mal ausprobieren, ob orderedLink(anyHandle(), var("node", HGHandle.class)) schneller ist, wenn es mit
+		// TODO: einem TargetAt index kombiniert wird. Funzt aber nut, wenn keine var() benutzt wird, sondern "echtes"
+		// TODO: handle. Eventuell könnte mensch auch einen CompositeIndex zusammen mit einer IndexCondition nutzen?
 		return make(HGHandle.class, database)
 			.compile(
 				apply(
