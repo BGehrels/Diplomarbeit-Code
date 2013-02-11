@@ -1,3 +1,3 @@
 #!/bin/bash
 cd ..
-DB_USERNAME="root" setup-env.sh
+DB_USERNAME="root" ./setup-env.sh
