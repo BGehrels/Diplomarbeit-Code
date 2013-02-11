@@ -34,7 +34,7 @@ mkdir -p spool/kestrel
 rm *.log
 
 JAVA_OPTS="-Xms256m -Xmx6G -XX:NewSize=64m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -server"
-java $JAVA_OPTS -jar ./dist/flockdb/flockdb-${VERSION}.jar config/production.scala &
+java $JAVA_OPTS -jar ./dist/flockdb/flockdb-${VERSION}.jar /home/bgehrels/benchmark/Diplomarbeit-Code/production.scala &
 
 sleep 30
 
