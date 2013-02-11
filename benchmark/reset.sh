@@ -8,7 +8,7 @@ fi
 rm logs/*
 rm -Rf neo4jDB
 rm -Rf hyperGraphDB
+sudo service mysql start
 echo "DROP DATABASE edges_development" | mysql -u root
 echo "DROP DATABASE flockdb_development" | mysql -u root
-
-#./startFlockDB.sh
+sudo service mysql stop
