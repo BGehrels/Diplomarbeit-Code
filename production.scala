@@ -38,7 +38,7 @@ class ProductionQueryEvaluator extends AsyncQueryEvaluator {
 class ProductionNameServerReplica(host: String) extends Mysql {
   val connection = new Connection with Credentials {
     val hostnames = Seq(host)
-    val database = "flock_edges_production"
+    val database = "flockdb_development"
   }
 
   queryEvaluator = new QueryEvaluator {
@@ -55,8 +55,7 @@ new FlockDB {
   jobRelay        = NoJobRelay
 
   nameServerReplicas = Seq(
-    new ProductionNameServerReplica("flockdb001.twitter.com"),
-    new ProductionNameServerReplica("flockdb002.twitter.com")
+    new ProductionNameServerReplica("localhost")
   )
 
   jobInjector.timeout               = 100.millis
@@ -65,7 +64,7 @@ new FlockDB {
 
   val databaseConnection = new Credentials {
     val hostnames = Seq("localhost")
-    val database = "edges"
+    val database = "edges_development"
     urlOptions = Map("rewriteBatchedStatements" -> "true")
   }
 
@@ -84,7 +83,7 @@ new FlockDB {
     jobQueueName = name + "_jobs"
 
     val schedulerType = new KestrelScheduler {
-      path = "/var/spool/kestrel"
+      path = "spool/kestrel"
       maxMemorySize = 36.megabytes
     }
 
@@ -113,7 +112,7 @@ new FlockDB {
           duration = 60.seconds
           maxToDisplay = 10
           handler = new FileHandlerConfig {
-            filename = "/var/log/flock/production.log"
+            filename = "production.log"
             roll = Policy.Hourly
           }
         })
@@ -132,7 +131,7 @@ new FlockDB {
       level = Some(Level.INFO)
       handlers = List(new FileHandlerConfig {
         roll = Policy.Never
-        filename = "/var/log/flock/bad_jobs.log"
+        filename = "bad_jobs.log"
       })
     })
 }
