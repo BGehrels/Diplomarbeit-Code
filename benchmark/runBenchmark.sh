@@ -32,7 +32,6 @@ function runBenchmarkStep() {
 			# 6G fuers meinen Benchmarkcode
 			# 17G fuer mysql
 			JAVA_MEM="-Xmx6g"
-			echo "Setting JAVA_MEM to $JAVA_MEM"
 
 			echo "starting Mysql"
 			sudo service mysql start
@@ -48,7 +47,6 @@ function runBenchmarkStep() {
 		if [[ $DBMS == "neo4j" ]] 
 		then
 			JAVA_MEM="$JAVA_MEM -XX:+UseConcMarkSweepGC"
-			echo "Setting JAVA_MEM to $JAVA_MEM"
 		fi
 
 		java $JAVA_MEM -server -jar target/benchmark-1.0-jar-with-dependencies.jar geoff/$GEOFF_FILE $DBMS $ALGO 1> "$LOGFILENAME" 2> "$TIMEFILENAME"
