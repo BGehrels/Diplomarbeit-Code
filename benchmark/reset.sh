@@ -12,3 +12,6 @@ sudo service mysql start
 echo "DROP DATABASE edges_development" | mysql -u root
 echo "DROP DATABASE flockdb_development" | mysql -u root
 sudo service mysql stop
+
+
+bzip2 geoff/*.geoff
