@@ -2,7 +2,7 @@
 
 shopt -s nullglob
 declare -a algos=(import readWholeGraph calcSCC calcFoF calcCommonFriends calcRegularPathQueries)
-declare -a dbs=(neo4j hypergraphdb flockdb)
+declare -a dbs=(flockdb neo4j hypergraphdb)
 
 function runBenchmarkStep() {
 	BZIPED_GEOFF_FILE=$1
@@ -77,7 +77,8 @@ function runBenchmarkStep() {
 
 function clearOSCaches() {
 	sudo sync
-	sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
+	#sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
+	sudo reboot
 }
 
 function clearAllDatabaseTmpFiles() {
@@ -100,11 +101,6 @@ function clearAllDatabaseTmpFiles() {
 	if [[ $DBMS == "hypergraphdb"  ]]
 	then
 		rm -Rf hyperGraphDB
-	fi
-
-	if [[ $2 != "dev" ]]
-	then
-		clearOSCaches
 	fi
 }
 
@@ -130,14 +126,23 @@ function compareLogs() {
 }
 
 function compareLogsForAlgo() {
-	# args: 1: dataFileName, 2: algo, 3: db1, 4: db2
-	sort logs/$1-$3-$2.stdout | grep -v "checkpoint .*:0" > logs/$1-$3-$2.sorted
-	sort logs/$1-$4-$2.stdout | grep -v "checkpoint .*:0" > logs/$1-$4-$2.sorted
-	diff -q logs/$1-$3-$2.sorted logs/$1-$4-$2.sorted
+	DATA_FILE_NAME=$1
+	ALGO=$2
+	DBMS1=$3
+	DBMS2=$4
+
+	UNZIPED_DATA_FILE_NAME=`basename $1 '.bz2'`
+	FILE_BASE_NAME_1=logs/$UNZIPED_DATA_FILE_NAME-$DBMS1-$ALGO
+	FILE_BASE_NAME_2=logs/$UNZIPED_DATA_FILE_NAME-$DBMS2-$ALGO
+
+	sort $FILE_BASE_NAME_1.stdout | grep -v "checkpoint .*:0" > $FILE_BASE_NAME_1.sorted 
+	sort $FILE_BASE_NAME_2.stdout | grep -v "checkpoint .*:0" > $FILE_BASE_NAME_2.sorted 
+
+	diff -q $FILE_BASE_NAME_1.sorted $FILE_BASE_NAME_2.sorted
 	if [[ $? != 0 ]] ; then
-        echo logs/$1-$3-$2.sorted and logs/$1-$4-$2.sorted were different
-        exit
-    fi
+		echo $FILE_BASE_NAME_1.sorted and $FILE_BASE_NAME_2.sorted were different
+		exit
+	fi
 }
 
 for f in geoff/*.geoff.bz2
