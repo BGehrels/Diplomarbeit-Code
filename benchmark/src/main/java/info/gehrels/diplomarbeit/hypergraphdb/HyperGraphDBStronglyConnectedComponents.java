@@ -6,6 +6,7 @@ import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HyperGraph;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
 import static org.hypergraphdb.HGQuery.hg.apply;
@@ -50,6 +51,13 @@ public class HyperGraphDBStronglyConnectedComponents
 
 	@Override
 	protected Iterable<HGHandle> getOutgoingIncidentNodes(final HGHandle node) throws Exception {
+		List list1 = graphDB.findAll(incidentAt(node, 0));
+		List list2 = graphDB.findAll(
+			apply(
+				targetAt(graphDB, 1),
+				incidentAt(node, 0)
+			)
+		);
 		return new Iterable<HGHandle>() {
 			@Override
 			public Iterator<HGHandle> iterator() {
