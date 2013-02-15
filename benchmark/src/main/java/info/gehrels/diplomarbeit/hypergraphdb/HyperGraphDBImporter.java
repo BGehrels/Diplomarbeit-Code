@@ -40,12 +40,12 @@ public class HyperGraphDBImporter extends CachingImporter<HGHandle> {
     // Index incoming edges
     hyperGraph.getIndexManager()
     .register(
-      new ByTargetIndexer(hyperGraph.getTypeSystem().getTypeHandle(String.class), 0));
+      new ByTargetIndexer(hyperGraph.getTypeSystem().getTypeHandle(HGValueLink.class), 0));
 
     // Index outgoing edges
     hyperGraph.getIndexManager()
     .register(
-      new ByTargetIndexer(hyperGraph.getTypeSystem().getTypeHandle(String.class), 1));
+      new ByTargetIndexer(hyperGraph.getTypeSystem().getTypeHandle(HGValueLink.class), 1));
   }
 
   @Override
