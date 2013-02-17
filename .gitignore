@@ -13,3 +13,4 @@ benchmark/logs
 hyperGraphDB/
 .idea/
 benchmark/neo4jDB
+neo4jDB
