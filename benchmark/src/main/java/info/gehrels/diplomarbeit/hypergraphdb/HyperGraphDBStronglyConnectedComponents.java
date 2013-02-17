@@ -7,9 +7,10 @@ import org.hypergraphdb.HyperGraph;
 import java.util.Iterator;
 
 import static info.gehrels.diplomarbeit.hypergraphdb.HyperGraphDBHelper.createHyperGraphDB;
+import static org.hypergraphdb.HGQuery.hg.anyHandle;
 import static org.hypergraphdb.HGQuery.hg.apply;
 import static org.hypergraphdb.HGQuery.hg.findAll;
-import static org.hypergraphdb.HGQuery.hg.incidentAt;
+import static org.hypergraphdb.HGQuery.hg.orderedLink;
 import static org.hypergraphdb.HGQuery.hg.targetAt;
 import static org.hypergraphdb.HGQuery.hg.type;
 
@@ -43,7 +44,7 @@ public class HyperGraphDBStronglyConnectedComponents extends AbstractStronglyCon
         return graphDB.find(
           apply(
             targetAt(graphDB, 1),
-            incidentAt(node, 0)));
+            orderedLink(node, anyHandle())));
       }
     };
   }
