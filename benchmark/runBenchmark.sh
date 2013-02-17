@@ -46,7 +46,7 @@ function runBenchmarkStep() {
 		
 		if [[ $DBMS == "neo4j" ]] 
 		then
-			JAVA_MEM="$JAVA_MEM -XX:+UseConcMarkSweepGC"
+			JAVA_MEM="-Xmx22g -XX:+UseConcMarkSweepGC"
 		fi
 
 		java $JAVA_MEM -server -jar target/benchmark-1.0-jar-with-dependencies.jar geoff/$GEOFF_FILE $DBMS $ALGO 1> "$LOGFILENAME" 2> "$TIMEFILENAME"
