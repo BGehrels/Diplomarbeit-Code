@@ -92,6 +92,7 @@ function clearAllDatabaseTmpFiles() {
 		echo "DROP DATABASE edges_development" | mysql -u root
 		echo "DROP DATABASE flockdb_development" | mysql -u root
 		sudo service mysql stop
+		sudo sh -c "rm /var/lib/mysql/ib*"
 	fi
 
 	if [[ $DBMS == "neo4j" ]]
