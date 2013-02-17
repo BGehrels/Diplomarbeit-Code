@@ -19,7 +19,7 @@ public class HyperGraphDBFriendsOfFriends extends AbstractFriendsOfFriends {
 	private final HGQuery<HGHandle> queryForNodeById;
 
 	public static void main(String[] args) throws Exception {
-		new HyperGraphDBFriendsOfFriends(createHyperGraphDB(args[0]), parseLong(args[1])).calculateFriendsOfFriends();
+		new HyperGraphDBFriendsOfFriends(createHyperGraphDB(args[0], true), parseLong(args[1])).calculateFriendsOfFriends();
 	}
 
 	public HyperGraphDBFriendsOfFriends(HyperGraph hyperGraph, long maxNodeId) {

@@ -24,7 +24,7 @@ public class HyperGraphReadWholeGraph extends AbstractReadWholeGraph {
 		measure(new Measurement<Void>() {
 			@Override
 			public void execute(Void database) throws Exception {
-				new HyperGraphReadWholeGraph(createHyperGraphDB(args[0]), true).readWholeGraph();
+				new HyperGraphReadWholeGraph(createHyperGraphDB(args[0], true), true).readWholeGraph();
 			}
 		});
 	}
