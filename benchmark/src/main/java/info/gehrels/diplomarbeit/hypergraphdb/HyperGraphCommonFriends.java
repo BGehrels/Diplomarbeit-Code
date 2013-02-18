@@ -23,7 +23,7 @@ public class HyperGraphCommonFriends extends AbstractCommonFriends {
     measure(new Measurement<Void>() {
         @Override
         public void execute(Void database) throws Exception {
-          new HyperGraphCommonFriends(createHyperGraphDB(args[0]), parseLong(args[1])).calculateCommonFriends();
+          new HyperGraphCommonFriends(createHyperGraphDB(args[0], true), parseLong(args[1])).calculateCommonFriends();
         }
       });
   }

@@ -51,12 +51,11 @@ public class FlockDBFriendsOfFriends extends AbstractFriendsOfFriends {
 			return;
 		}
 
+		alreadyTraversed.addAll(currentDepthNodes);
+
 		Set<Long> nextDepthLevelNodes = new HashSet<>();
-		for (Long nodeId : currentDepthNodes) {
-			alreadyTraversed.add(nodeId);
-			for (Long friend : getAllOutgoingRelationshipsFor(graphDb, nodeId)) {
-				nextDepthLevelNodes.add(friend);
-			}
+		for (Long nextDepthLevelNode : getAllOutgoingRelationshipsFor(graphDb, currentDepthNodes)) {
+			nextDepthLevelNodes.add(nextDepthLevelNode);
 		}
 
 		nextDepthLevelNodes.removeAll(alreadyTraversed);

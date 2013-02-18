@@ -29,8 +29,6 @@ public class FlockDBRegularPathQuery extends AbstractRegularPathQuery {
 			graphDB.select(simpleSelection(aNode, 3, INCOMING)).execute().get(0)
 		);
 
-		// TODO: Mehrere Anfragen gleichzeitig?
-		// TODO: Union Query?
 		for (Long cNode : cResultList) {
 			NonPagedResultList bResultList = new NonPagedResultList(
 				graphDB.select(simpleSelection(cNode, 2, INCOMING)).execute().get(0));

@@ -24,7 +24,7 @@ public class HyperGraphReadWholeGraph extends AbstractReadWholeGraph {
 		measure(new Measurement<Void>() {
 			@Override
 			public void execute(Void database) throws Exception {
-				new HyperGraphReadWholeGraph(createHyperGraphDB(args[0]), true).readWholeGraph();
+				new HyperGraphReadWholeGraph(createHyperGraphDB(args[0], true), true).readWholeGraph();
 			}
 		});
 	}
@@ -32,11 +32,11 @@ public class HyperGraphReadWholeGraph extends AbstractReadWholeGraph {
 	@Override
 	public void readWholeGraph() {
 		List<HGValueLink> all = getAll(graphDB, type(String.class));
-		for (HGValueLink links : all) {
+		for (HGValueLink link : all) {
 			write(
-				graphDB.get(links.getTargetAt(0)),
-				links.getValue(),
-				graphDB.get(links.getTargetAt(1))
+				graphDB.get(link.getTargetAt(0)),
+				link.getValue(),
+				graphDB.get(link.getTargetAt(1))
 			);
 		}
 	}

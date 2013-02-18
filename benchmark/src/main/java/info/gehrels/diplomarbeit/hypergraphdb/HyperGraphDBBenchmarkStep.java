@@ -29,7 +29,7 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep<HyperGraph>
 		measure(new Measurement<Void>() {
 			@Override
 			public void execute(Void database) throws Exception {
-				new HyperGraphReadWholeGraph(createHyperGraphDB(HGDB_PATH), true).readWholeGraph();
+				new HyperGraphReadWholeGraph(createHyperGraphDB(HGDB_PATH, true), true).readWholeGraph();
 			}
 		});
 	}
@@ -71,7 +71,7 @@ public class HyperGraphDBBenchmarkStep extends AbstractBenchmarkStep<HyperGraph>
 	}
 
 	protected HyperGraph createAndWarmUpDatabase() throws Exception {
-		HyperGraph hyperGraph = createHyperGraphDB(HGDB_PATH);
+		HyperGraph hyperGraph = createHyperGraphDB(HGDB_PATH, true);
 		new HyperGraphReadWholeGraph(hyperGraph, false).readWholeGraph();
 		return hyperGraph;
 	}

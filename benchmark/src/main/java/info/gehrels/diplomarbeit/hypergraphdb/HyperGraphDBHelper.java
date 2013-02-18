@@ -8,9 +8,9 @@ import static org.hypergraphdb.HGQuery.hg.*;
 
 
 public class HyperGraphDBHelper {
-  static HyperGraph createHyperGraphDB(String dbPath) throws IOException {
+  static HyperGraph createHyperGraphDB(String dbPath, boolean transactional) throws IOException {
     HGConfiguration config = new HGConfiguration();
-    config.setTransactional(false);
+    config.setTransactional(transactional);
     config.setUseSystemAtomAttributes(false);
     return HGEnvironment.get(dbPath, config);
   }

@@ -28,7 +28,7 @@ public class HyperGraphRegularPathQuery extends AbstractRegularPathQuery {
         Measurement.measure(new Measurement<Void>() {
             @Override
             public void execute(Void database) throws Exception {
-                new HyperGraphRegularPathQuery(createHyperGraphDB(args[0]), parseLong(args[1])).calculateRegularPaths();
+                new HyperGraphRegularPathQuery(createHyperGraphDB(args[0], true), parseLong(args[1])).calculateRegularPaths();
             }
         });
     }
