@@ -58,8 +58,12 @@
 			<artifactId>je</artifactId>
 			<version>5.0.34</version>
 		</dependency>
-
-	</dependencies>
+        <dependency>
+            <groupId>com.sparsity</groupId>
+            <artifactId>dexjava</artifactId>
+            <version>4.7.0</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
