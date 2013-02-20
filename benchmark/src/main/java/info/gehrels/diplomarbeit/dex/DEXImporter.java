@@ -8,24 +8,27 @@ import java.util.Map;
 
 
 public class DEXImporter extends CachingImporter<Long> {
+  public static final Value VALUE = new Value();
+
   private final Graph graph;
   private final int nodeType;
-  private final int nodeIdType;
 
+  private final int nodeIdType;
   private final Map<String, Integer> EDGE_LABEL_TO_EDGE_TYPE_ID = new HashMap<>();
   private final Session session;
   private final Database db;
   private final Dex dex;
 
-  public DEXImporter(String inputPath) throws Exception {
+  public DEXImporter(String inputPath, String storageFileName) throws Exception {
     super(inputPath);
 
 
     DexConfig config = new DexConfig();
     dex = new Dex(config);
-    db = dex.create("benchmark.dex", "Benchmark");
+    db = dex.create(storageFileName, "Benchmark");
     session = db.newSession();
     graph = session.getGraph();
+    session.begin();
 
     nodeType = graph.newNodeType("BENCHMARK_NODE");
     nodeIdType = graph.newAttribute(nodeType, "ID", DataType.Long, AttributeKind.Unique);
@@ -44,15 +47,14 @@ public class DEXImporter extends CachingImporter<Long> {
 
   @Override
   protected Long createNodeForCache(Node node) {
-    Value value = new Value();
-
     long nodeId = graph.newNode(nodeType);
-    graph.setAttribute(nodeId, nodeIdType, value.setLong(node.id));
+    graph.setAttribute(nodeId, nodeIdType, VALUE.setLong(node.id));
     return nodeId;
   }
 
 
   public void shutdown() {
+    session.commit();
     session.close();
     db.close();
     dex.close();
