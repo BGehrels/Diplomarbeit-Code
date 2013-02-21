@@ -2,7 +2,7 @@
 
 shopt -s nullglob
 declare -a algos=(import readWholeGraph calcSCC calcFoF calcCommonFriends calcRegularPathQueries)
-declare -a dbs=(neo4j hypergraphdb dex flockdb)
+declare -a dbs=(dex neo4j hypergraphdb flockdb)
 
 function waitForMySQL() {
 	false
@@ -125,6 +125,12 @@ function clearAllDatabaseTmpFiles() {
 	if [[ $DBMS == "hypergraphdb"  ]]
 	then
 		rm -Rf hyperGraphDB
+	fi
+	
+	if [[ $DBMS == "dex" ]]
+	then		
+		rm benchmark.*
+		rm dex.log
 	fi
 }
 
