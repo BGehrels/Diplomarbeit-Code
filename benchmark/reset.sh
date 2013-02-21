@@ -17,3 +17,5 @@ sudo rm /var/log/upstart/benchmark.log
 sudo touch /var/log/upstart/benchmark.log
 sudo chmod 666 /var/log/upstart/benchmark.log
 bzip2 geoff/*.geoff
+rm benchmark.*
+rm dex.log
