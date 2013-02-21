@@ -1,14 +1,11 @@
 package info.gehrels.diplomarbeit.dex;
 
-import com.sparsity.dex.gdb.Session;
 import info.gehrels.diplomarbeit.AbstractBenchmarkStep;
 import info.gehrels.diplomarbeit.Measurement;
 import static info.gehrels.diplomarbeit.Measurement.measure;
-import static info.gehrels.diplomarbeit.dex.DEXHelper.closeDex;
-import static info.gehrels.diplomarbeit.dex.DEXHelper.openDEX;
 
 
-public class DexBenchmarkStep extends AbstractBenchmarkStep {
+public class DexBenchmarkStep extends AbstractBenchmarkStep<DexWrapper> {
   public static final String STORAGE_FILE_NAME = "benchmark.dex";
 
   public DexBenchmarkStep(String algorithm, String inputPath) {
@@ -16,10 +13,10 @@ public class DexBenchmarkStep extends AbstractBenchmarkStep {
   }
 
   @Override
-  protected Object createAndWarmUpDatabase() throws Exception {
-    Session session = openDEX(STORAGE_FILE_NAME);
-    new DEXReadWholeGraph(session, true).readWholeGraph();
-    return session;
+  protected DexWrapper createAndWarmUpDatabase() throws Exception {
+    DexWrapper dexWrapper = new DexWrapper(STORAGE_FILE_NAME);
+    new DEXReadWholeGraph(dexWrapper, true).readWholeGraph();
+    return dexWrapper;
   }
 
   @Override
@@ -39,9 +36,9 @@ public class DexBenchmarkStep extends AbstractBenchmarkStep {
     measure(new Measurement<Void>() {
         @Override
         public void execute(Void database) throws Exception {
-          Session session = openDEX(STORAGE_FILE_NAME);
-          new DEXReadWholeGraph(session, true).readWholeGraph();
-          closeDex();
+          try(DexWrapper dexWrapper = new DexWrapper(STORAGE_FILE_NAME)) {
+            new DEXReadWholeGraph(dexWrapper, true).readWholeGraph();
+          }
         }
       }, null);
 
@@ -49,7 +46,12 @@ public class DexBenchmarkStep extends AbstractBenchmarkStep {
 
   @Override
   protected void calcSCC() throws Exception {
-    //To change body of implemented methods use File | Settings | File Templates.
+    warmUpDatabaseAndMeasure(new Measurement<DexWrapper>() {
+        @Override
+        public void execute(DexWrapper dexWrapper) throws Exception {
+          new DexStronglyConnectedComponentsCalculator(dexWrapper).calculateStronglyConnectedComponents();
+        }
+      });
   }
 
   @Override

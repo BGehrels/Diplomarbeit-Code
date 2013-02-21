@@ -2,21 +2,16 @@ package info.gehrels.diplomarbeit.dex;
 
 import com.sparsity.dex.gdb.*;
 import info.gehrels.diplomarbeit.AbstractReadWholeGraph;
-import static info.gehrels.diplomarbeit.dex.DEXHelper.closeDex;
-import static info.gehrels.diplomarbeit.dex.DEXHelper.openDEX;
 
 
 public class DEXReadWholeGraph extends AbstractReadWholeGraph {
-  private Graph graph;
-  private Integer nodeType;
-  private Integer nodeIdType;
+  private final DexWrapper dexWrapper;
+  private final Graph graph;
 
-  public DEXReadWholeGraph(Session session, boolean writeToStdOut) {
+  public DEXReadWholeGraph(DexWrapper dexWrapper, boolean writeToStdOut) {
     super(writeToStdOut);
-    this.graph = session.getGraph();
-    nodeType = graph.findNodeTypes().iterator().next();
-    nodeIdType = graph.findAttributes(nodeType).iterator().next();
-
+    this.dexWrapper = dexWrapper;
+    this.graph = this.dexWrapper.getGraph();
   }
 
   @Override
@@ -31,27 +26,22 @@ public class DEXReadWholeGraph extends AbstractReadWholeGraph {
         EdgeData edgeData = graph.getEdgeData(edgeId);
         long tailId = edgeData.getTail();
 
-        Value tailName = getNodeId(tailId);
+        long tailName = dexWrapper.getNodeName(tailId);
         long headId = edgeData.getHead();
-        Value headName = getNodeId(headId);
+        long headName = dexWrapper.getNodeName(headId);
 
-        write(tailName.getLong(), edgeType, headName.getLong());
+        write(tailName, edgeType, headName);
       }
 
       edges.close();
     }
   }
 
-  private Value getNodeId(long tailId) {
-    return graph.getAttribute(tailId, nodeIdType);
-  }
-
 
   public static void main(String[] args) throws Exception {
-    String s = "benchmark.dex";
-    Session session = openDEX(s);
-    DEXReadWholeGraph dexReadWholeGraph = new DEXReadWholeGraph(session, true);
+    DexWrapper dexWrapper = new DexWrapper("benchmark.dex");
+    DEXReadWholeGraph dexReadWholeGraph = new DEXReadWholeGraph(dexWrapper, true);
     dexReadWholeGraph.readWholeGraph();
-    closeDex();
+    dexWrapper.close();
   }
 }
