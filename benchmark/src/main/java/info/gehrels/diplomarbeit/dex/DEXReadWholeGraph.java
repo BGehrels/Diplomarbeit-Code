@@ -4,11 +4,11 @@ import com.sparsity.dex.gdb.*;
 import info.gehrels.diplomarbeit.AbstractReadWholeGraph;
 
 
-public class DEXReadWholeGraph extends AbstractReadWholeGraph {
+public class DexReadWholeGraph extends AbstractReadWholeGraph {
   private final DexWrapper dexWrapper;
   private final Graph graph;
 
-  public DEXReadWholeGraph(DexWrapper dexWrapper, boolean writeToStdOut) {
+  public DexReadWholeGraph(DexWrapper dexWrapper, boolean writeToStdOut) {
     super(writeToStdOut);
     this.dexWrapper = dexWrapper;
     this.graph = this.dexWrapper.getGraph();
@@ -40,7 +40,7 @@ public class DEXReadWholeGraph extends AbstractReadWholeGraph {
 
   public static void main(String[] args) throws Exception {
     DexWrapper dexWrapper = new DexWrapper("benchmark.dex");
-    DEXReadWholeGraph dexReadWholeGraph = new DEXReadWholeGraph(dexWrapper, true);
+    DexReadWholeGraph dexReadWholeGraph = new DexReadWholeGraph(dexWrapper, true);
     dexReadWholeGraph.readWholeGraph();
     dexWrapper.close();
   }

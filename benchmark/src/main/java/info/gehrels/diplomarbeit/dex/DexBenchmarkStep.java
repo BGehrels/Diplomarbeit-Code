@@ -15,7 +15,7 @@ public class DexBenchmarkStep extends AbstractBenchmarkStep<DexWrapper> {
   @Override
   protected DexWrapper createAndWarmUpDatabase() throws Exception {
     DexWrapper dexWrapper = new DexWrapper(STORAGE_FILE_NAME);
-    new DEXReadWholeGraph(dexWrapper, true).readWholeGraph();
+    new DexReadWholeGraph(dexWrapper, true).readWholeGraph();
     return dexWrapper;
   }
 
@@ -24,7 +24,7 @@ public class DexBenchmarkStep extends AbstractBenchmarkStep<DexWrapper> {
     measure(new Measurement<Void>() {
         @Override
         public void execute(Void database) throws Exception {
-          DEXImporter importer = new DEXImporter(inputPath, STORAGE_FILE_NAME);
+          DexImporter importer = new DexImporter(inputPath, STORAGE_FILE_NAME);
           importer.importNow();
           importer.shutdown();
         }
@@ -37,7 +37,7 @@ public class DexBenchmarkStep extends AbstractBenchmarkStep<DexWrapper> {
         @Override
         public void execute(Void database) throws Exception {
           try(DexWrapper dexWrapper = new DexWrapper(STORAGE_FILE_NAME)) {
-            new DEXReadWholeGraph(dexWrapper, true).readWholeGraph();
+            new DexReadWholeGraph(dexWrapper, true).readWholeGraph();
           }
         }
       }, null);

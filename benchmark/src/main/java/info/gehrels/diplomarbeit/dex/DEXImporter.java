@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class DEXImporter extends CachingImporter<Long> {
+public class DexImporter extends CachingImporter<Long> {
   public static final Value VALUE = new Value();
 
   private final Graph graph;
@@ -19,7 +19,7 @@ public class DEXImporter extends CachingImporter<Long> {
   private final Database db;
   private final Dex dex;
 
-  public DEXImporter(String inputPath, String storageFileName) throws Exception {
+  public DexImporter(String inputPath, String storageFileName) throws Exception {
     super(inputPath);
 
 
