@@ -13,7 +13,10 @@ public class DexWrapper implements Closeable {
 
   private final int nodeType;
   private final int nodeNameType;
+
   private final int edgeTypeL1;
+  private final int edgeTypeL2;
+  private final int edgeTypeL3;
 
   private final Value value;
 
@@ -28,6 +31,8 @@ public class DexWrapper implements Closeable {
     nodeType = graph.findNodeTypes().iterator().next();
     nodeNameType = graph.findAttributes(nodeType).iterator().next();
     edgeTypeL1 = graph.findType("L1");
+    edgeTypeL2 = graph.findType("L2");
+    edgeTypeL3 = graph.findType("L3");
 
     value = new Value();
   }
@@ -63,5 +68,13 @@ public class DexWrapper implements Closeable {
 
   public int getEdgeTypeL1() {
     return edgeTypeL1;
+  }
+
+  public int getEdgeTypeL2() {
+    return edgeTypeL2;
+  }
+
+  public int getEdgeTypeL3() {
+    return edgeTypeL3;
   }
 }
