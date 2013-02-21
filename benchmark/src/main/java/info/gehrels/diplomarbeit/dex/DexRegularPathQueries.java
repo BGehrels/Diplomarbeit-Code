@@ -16,10 +16,6 @@ public class DexRegularPathQueries extends AbstractRegularPathQuery {
     this.dexWrapper = dexWrapper;
   }
 
-  //    + "MATCH a-[:L1]->b,\n"
-  //            + "      b-[:L2]->c,\n"
-  //            + "      c-[:L3]->a\n"
-  //            + "RETURN a.name, b.name, c.name",
   @Override
   protected void calculateRegularPaths(int aNodeName) throws FlockException, IOException {
     long aNodeId = dexWrapper.getNodeId(aNodeName);
