@@ -13,6 +13,8 @@ public class DexWrapper implements Closeable {
 
   private final int nodeType;
   private final int nodeNameType;
+  private final int edgeTypeL1;
+
   private final Value value;
 
   public DexWrapper(String storageFileName) throws FileNotFoundException {
@@ -25,6 +27,7 @@ public class DexWrapper implements Closeable {
 
     nodeType = graph.findNodeTypes().iterator().next();
     nodeNameType = graph.findAttributes(nodeType).iterator().next();
+    edgeTypeL1 = graph.findType("L1");
 
     value = new Value();
   }
@@ -56,5 +59,9 @@ public class DexWrapper implements Closeable {
     session.close();
     database.close();
     dex.close();
+  }
+
+  public int getEdgeTypeL1() {
+    return edgeTypeL1;
   }
 }
