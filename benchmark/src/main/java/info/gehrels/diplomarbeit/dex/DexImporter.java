@@ -23,7 +23,9 @@ public class DexImporter extends CachingImporter<Long> {
     super(inputPath);
 
 
-    DexConfig config = new DexConfig();
+    DexConfig config = DexWrapper.getDexConfig();
+    config.setRecoveryEnabled(false);
+
     dex = new Dex(config);
     db = dex.create(storageFileName, "Benchmark");
     session = db.newSession();
