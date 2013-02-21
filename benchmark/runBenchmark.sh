@@ -2,7 +2,16 @@
 
 shopt -s nullglob
 declare -a algos=(import readWholeGraph calcSCC calcFoF calcCommonFriends calcRegularPathQueries)
-declare -a dbs=(flockdb neo4j hypergraphdb)
+declare -a dbs=(neo4j hypergraphdb dex)
+
+function waitForMySQL() {
+	false
+	until [[ $? == 0 ]]
+	do
+		sleep 1
+		mysql -u root mysql -e "SHOW TABLES" > /dev/null
+	done
+}
 
 function runBenchmarkStep() {
 	BZIPED_GEOFF_FILE=$1
@@ -24,8 +33,18 @@ function runBenchmarkStep() {
 		fi
 
 		# Every DBMS may use 29 G of RAM.
-		# since the JVM uses approx. 2 G of overhead, we set -Xmx to 27g by default
-		JAVA_MEM="-Xmx27g"
+		if [[ $2 == "hypergraphdb" ]]
+		then		
+			# since the JVM uses approx. 2 G of overhead, we set -Xmx to 27g by default
+			JAVA_MEM="-Xmx27g"
+		fi
+		
+		if [[ $2 == "dex" ]]
+		then		
+			# since the JVM uses approx. 2 G of overhead, we set -Xmx to 27g by default
+			JAVA_MEM="-Xmx1g"
+		fi
+		
 		if [[ $2 == "flockdb" ]] 
 		then
 			# 6G fuer FlockDB;
@@ -35,6 +54,7 @@ function runBenchmarkStep() {
 
 			echo "starting Mysql"
 			sudo service mysql start
+			waitForMySQL
 
 			if [[ $ALGO == "import" ]]
 			then
@@ -47,6 +67,8 @@ function runBenchmarkStep() {
 		if [[ $DBMS == "neo4j" ]] 
 		then
 			JAVA_MEM="-Xmx22g -XX:+UseConcMarkSweepGC"
+			sudo sh -c "echo '50' > /proc/sys/vm/dirty_background_ratio"
+			sudo sh -c "echo '90' > /proc/sys/vm/dirty_ratio"
 		fi
 
 		java $JAVA_MEM -server -jar target/benchmark-1.0-jar-with-dependencies.jar geoff/$GEOFF_FILE $DBMS $ALGO 1> "$LOGFILENAME" 2> "$TIMEFILENAME"
