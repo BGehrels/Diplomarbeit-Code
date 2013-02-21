@@ -56,7 +56,12 @@ public class DexBenchmarkStep extends AbstractBenchmarkStep<DexWrapper> {
 
   @Override
   protected void calcFoF() throws Exception {
-    //To change body of implemented methods use File | Settings | File Templates.
+    warmUpDatabaseAndMeasure(new Measurement<DexWrapper>() {
+        @Override
+        public void execute(DexWrapper dexWrapper) throws Exception {
+          new DexFriendsOfFriends(dexWrapper, maxNodeId).calculateFriendsOfFriends();
+        }
+      });
   }
 
   @Override

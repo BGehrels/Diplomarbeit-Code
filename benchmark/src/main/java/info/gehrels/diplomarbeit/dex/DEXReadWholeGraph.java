@@ -21,27 +21,26 @@ public class DexReadWholeGraph extends AbstractReadWholeGraph {
     for (int edgeTypeId : edgeTypes) {
       String edgeType = graph.getType(edgeTypeId).getName();
 
-      Objects edges = graph.select(edgeTypeId);
-      for (long edgeId : edges) {
-        EdgeData edgeData = graph.getEdgeData(edgeId);
-        long tailId = edgeData.getTail();
+      try(Objects edges = graph.select(edgeTypeId)) {
+        for (long edgeId : edges) {
+          EdgeData edgeData = graph.getEdgeData(edgeId);
+          long tailId = edgeData.getTail();
 
-        long tailName = dexWrapper.getNodeName(tailId);
-        long headId = edgeData.getHead();
-        long headName = dexWrapper.getNodeName(headId);
+          long tailName = dexWrapper.getNodeName(tailId);
+          long headId = edgeData.getHead();
+          long headName = dexWrapper.getNodeName(headId);
 
-        write(tailName, edgeType, headName);
+          write(tailName, edgeType, headName);
+        }
       }
-
-      edges.close();
     }
   }
 
 
   public static void main(String[] args) throws Exception {
-    DexWrapper dexWrapper = new DexWrapper("benchmark.dex");
-    DexReadWholeGraph dexReadWholeGraph = new DexReadWholeGraph(dexWrapper, true);
-    dexReadWholeGraph.readWholeGraph();
-    dexWrapper.close();
+    try(DexWrapper dexWrapper = new DexWrapper("benchmark.dex")) {
+      DexReadWholeGraph dexReadWholeGraph = new DexReadWholeGraph(dexWrapper, true);
+      dexReadWholeGraph.readWholeGraph();
+    }
   }
 }

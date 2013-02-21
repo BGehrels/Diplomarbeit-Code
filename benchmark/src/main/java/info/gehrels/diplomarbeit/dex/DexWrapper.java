@@ -10,7 +10,10 @@ public class DexWrapper implements Closeable {
   private final Database database;
   private final Session session;
   private final Graph graph;
-  private final int nodeIdType;
+
+  private final int nodeType;
+  private final int nodeNameType;
+  private final Value value;
 
   public DexWrapper(String storageFileName) throws FileNotFoundException {
     DexConfig dexConfig = new DexConfig();
@@ -20,8 +23,10 @@ public class DexWrapper implements Closeable {
     session = database.newSession();
     graph = session.getGraph();
 
-    int nodeType = graph.findNodeTypes().iterator().next();
-    nodeIdType = graph.findAttributes(nodeType).iterator().next();
+    nodeType = graph.findNodeTypes().iterator().next();
+    nodeNameType = graph.findAttributes(nodeType).iterator().next();
+
+    value = new Value();
   }
 
   public Session getSession() {
@@ -32,12 +37,18 @@ public class DexWrapper implements Closeable {
     return graph;
   }
 
-  public int getNodeIdType() {
-    return nodeIdType;
+  public int getNodeNameType() {
+    return nodeNameType;
   }
 
-  long getNodeName(long tailId) {
-    return graph.getAttribute(tailId, getNodeIdType()).getLong();
+  public long getNodeId(long nodeName) {
+    try(Objects result = graph.select(nodeNameType, Condition.Equal, value.setLong(nodeName))) {
+      return result.any();
+    }
+  }
+
+  long getNodeName(long nodeId) {
+    return graph.getAttribute(nodeId, getNodeNameType()).getLong();
   }
 
   @Override
