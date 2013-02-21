@@ -21,7 +21,8 @@ public class DexWrapper implements Closeable {
   private final Value value;
 
   public DexWrapper(String storageFileName) throws FileNotFoundException {
-    DexConfig dexConfig = new DexConfig();
+    DexConfig dexConfig = getDexConfig();
+    dexConfig.setRecoveryEnabled(true);
 
     dex = new Dex(dexConfig);
     database = dex.open(storageFileName, true);
@@ -35,6 +36,12 @@ public class DexWrapper implements Closeable {
     edgeTypeL3 = graph.findType("L3");
 
     value = new Value();
+  }
+
+  static DexConfig getDexConfig() {
+    DexConfig config = new DexConfig();
+    config.setCacheMaxSize(28160); // 27,5 G = 29 GB - 1,5 GB for the JVM
+    return config;
   }
 
   public Session getSession() {
