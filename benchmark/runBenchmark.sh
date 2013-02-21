@@ -2,7 +2,7 @@
 
 shopt -s nullglob
 declare -a algos=(import readWholeGraph calcSCC calcFoF calcCommonFriends calcRegularPathQueries)
-declare -a dbs=(neo4j hypergraphdb dex)
+declare -a dbs=(neo4j hypergraphdb dex flockdb)
 
 function waitForMySQL() {
 	false
