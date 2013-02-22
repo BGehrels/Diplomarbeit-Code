@@ -24,7 +24,9 @@ public class DexFriendsOfFriends extends AbstractFriendsOfFriends {
 
       while (traversalBFS.hasNext()) {
         long next = traversalBFS.next();
-        printFriendNode(startNodeName, dexWrapper.getNodeName(next));
+        if (traversalBFS.getCurrentDepth() > 0) {
+          printFriendNode(startNodeName, dexWrapper.getNodeName(next));
+        }
       }
 
     }
