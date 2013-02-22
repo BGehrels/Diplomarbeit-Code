@@ -4,15 +4,6 @@ shopt -s nullglob
 declare -a algos=(import readWholeGraph calcSCC calcFoF calcCommonFriends calcRegularPathQueries)
 declare -a dbs=(dex neo4j hypergraphdb flockdb)
 
-function waitForMySQL() {
-	false
-	until [[ $? == 0 ]]
-	do
-		sleep 1
-		mysql -u root mysql -e "SHOW TABLES" > /dev/null
-	done
-}
-
 function runBenchmarkStep() {
 	BZIPED_GEOFF_FILE=$1
 	DBMS=$2
@@ -54,7 +45,6 @@ function runBenchmarkStep() {
 
 			echo "starting Mysql"
 			sudo service mysql start
-			waitForMySQL
 
 			if [[ $ALGO == "import" ]]
 			then
@@ -137,7 +127,6 @@ function clearAllDatabaseTmpFiles() {
 function runBenchmark() {
 	BZIPPED_FILE_NAME=$1
 	DBMS=$2
-	echo "running benchmarks for $BZIPPED_FILE_NAME on $DBMS"
 	for algo in ${algos[@]}
 	do
 	    runBenchmarkStep $BZIPPED_FILE_NAME $DBMS $algo
@@ -177,8 +166,6 @@ function compareLogsForAlgo() {
 
 for f in geoff/*.geoff.bz2
 do
-	echo "Running benchmark for $f";
-
 	for db in ${dbs[@]}
 	do
 		runBenchmark `basename $f` $db
