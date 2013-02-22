@@ -18,7 +18,6 @@ public class DexWrapper implements Closeable {
   private final Session session;
   private final Graph graph;
 
-  private final int nodeType;
   private final int nodeNameType;
 
   private final int edgeTypeL1;
@@ -36,7 +35,7 @@ public class DexWrapper implements Closeable {
     session = database.newSession();
     graph = session.getGraph();
 
-    nodeType = graph.findNodeTypes().iterator().next();
+    int nodeType = graph.findNodeTypes().iterator().next();
     nodeNameType = graph.findAttributes(nodeType).iterator().next();
     edgeTypeL1 = graph.findType("L1");
     edgeTypeL2 = graph.findType("L2");
