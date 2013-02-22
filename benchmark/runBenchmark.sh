@@ -33,7 +33,7 @@ function runBenchmarkStep() {
 		if [[ $2 == "dex" ]]
 		then		
 			# since the JVM uses approx. 2 G of overhead, we set -Xmx to 27g by default
-			JAVA_MEM="-Xmx1g"
+			JAVA_MEM="-Xmx6g"
 		fi
 		
 		if [[ $2 == "flockdb" ]] 

@@ -1,6 +1,13 @@
 package info.gehrels.diplomarbeit.dex;
 
-import com.sparsity.dex.gdb.*;
+import com.sparsity.dex.gdb.Condition;
+import com.sparsity.dex.gdb.Database;
+import com.sparsity.dex.gdb.Dex;
+import com.sparsity.dex.gdb.DexConfig;
+import com.sparsity.dex.gdb.Graph;
+import com.sparsity.dex.gdb.Objects;
+import com.sparsity.dex.gdb.Session;
+import com.sparsity.dex.gdb.Value;
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 
@@ -40,7 +47,7 @@ public class DexWrapper implements Closeable {
 
   static DexConfig getDexConfig() {
     DexConfig config = new DexConfig();
-    config.setCacheMaxSize(28160); // 27,5 G = 29 GB - 1,5 GB for the JVM
+    config.setCacheMaxSize(23040); // 22,5 G = 29 GB - 6,5 GB for the JVM
     return config;
   }
 
