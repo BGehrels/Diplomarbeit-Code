@@ -30,7 +30,7 @@ public class RunBenchmarkStep {
 
       case "dex": {
         new DexBenchmarkStep(algorithm, inputPath).execute();
-	break;
+        break;
       }
 
       default: {

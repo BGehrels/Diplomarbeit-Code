@@ -15,7 +15,7 @@ public class DexBenchmarkStep extends AbstractBenchmarkStep<DexWrapper> {
   @Override
   protected DexWrapper createAndWarmUpDatabase() throws Exception {
     DexWrapper dexWrapper = new DexWrapper(STORAGE_FILE_NAME);
-    new DexReadWholeGraph(dexWrapper, true).readWholeGraph();
+    new DexReadWholeGraph(dexWrapper, false).readWholeGraph();
     return dexWrapper;
   }
 
