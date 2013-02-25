@@ -88,6 +88,7 @@ function runBenchmarkStep() {
 }
 
 function clearOSCaches() {
+	echo "rebooting..."
 	sudo reboot
 	exit
 }
