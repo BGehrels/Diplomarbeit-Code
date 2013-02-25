@@ -23,6 +23,8 @@ public class FlockDBHelper {
   }
 
   static Iterable<Long> getAllOutgoingRelationshipsFor(FlockDB graphDb, Set<Long> nodes) {
+    System.out.println(nodes);
+
     SelectionQuery query = null;
     for (Long node : nodes) {
       if (query == null) {
@@ -37,14 +39,7 @@ public class FlockDBHelper {
       return emptyList();
     }
 
-    PagedNodeIdList result = null;
-    try {
-      result = graphDb.select(query).execute().get(0);
-    } catch (Exception e) {
-      System.out.println(e);
-      System.out.println(e.getMessage());
-      System.out.println(nodes);
-    }
+    PagedNodeIdList result = graphDb.select(query).execute().get(0);
 
     return new NonPagedResultList(result);
   }
