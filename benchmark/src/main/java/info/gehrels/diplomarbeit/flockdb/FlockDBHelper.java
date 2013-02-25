@@ -23,8 +23,6 @@ public class FlockDBHelper {
   }
 
   static Iterable<Long> getAllOutgoingRelationshipsFor(FlockDB graphDb, Set<Long> nodes) {
-    System.out.println(nodes);
-
     SelectionQuery query = null;
     for (Long node : nodes) {
       if (query == null) {
